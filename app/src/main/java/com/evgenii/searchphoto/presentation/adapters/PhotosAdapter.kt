@@ -1,0 +1,30 @@
+package com.evgenii.searchphoto.presentation.adapters
+
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import com.evgenii.searchphoto.databinding.ItemPhotoBinding
+import com.evgenii.searchphoto.domain.model.PhotoItem
+import com.evgenii.searchphoto.presentation.viewholders.PhotosListViewHolder
+
+class PhotosAdapter(
+    private val onItemClick: (photoItem: PhotoItem) -> Unit,
+) : PagedListAdapter<PhotoItem, PhotosListViewHolder>(PhotosListDiffCallback()) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotosListViewHolder {
+        val binding = ItemPhotoBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        Log.i("myLogs", "initiii")
+        return PhotosListViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: PhotosListViewHolder, position: Int) {
+        val photo = getItem(position)
+        if (photo != null)
+            holder.bind(photo, onItemClick)
+    }
+}
