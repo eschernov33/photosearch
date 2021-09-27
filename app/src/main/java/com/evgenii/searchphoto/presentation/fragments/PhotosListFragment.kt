@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.paging.PagedList
 import com.evgenii.searchphoto.App
+import com.evgenii.searchphoto.R
 import com.evgenii.searchphoto.databinding.PhotosListFragmentBinding
 import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.presentation.adapters.PhotosAdapter
@@ -57,7 +59,7 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 presenter.onSearchApply(
                     binding.etSearch.text.toString(),
-                    this@PhotosListFragment
+                    this
                 )
                 true
             } else
@@ -66,29 +68,21 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
     }
 
     override fun setListVisible(visible: Boolean) {
-        // binding.rvMarsPhotos.isVisible = visible
+        binding.rvMarsPhotos.isVisible = visible
     }
 
-
-
-    override fun onDestroy() {
-        _binding = null
-        super.onDestroy()
-    }
-
-    override fun showPhotosList(pagedList: PagedList<PhotoItem>) {
+    override fun showPhotosList(pagedList: PagedList<PhotoItem>) =
         adapter.submitList(pagedList)
-    }
 
-    override fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
+    override fun showToast(user: String, photoId: Int) =
+        Toast.makeText(requireContext(),
+            getString(R.string.toast_message, user, photoId),
+            Toast.LENGTH_SHORT).show()
 
-    override fun clearPhotosList() {
+    override fun clearPhotosList() =
         adapter.submitList(null)
-    }
 
-    override fun setErrorMessage(msg: String) {
-        binding.etSearch.error = msg
+    override fun setErrorMessage(msg: Int) {
+        binding.etSearch.error = resources.getString(msg)
     }
 }

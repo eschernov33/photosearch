@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSearch"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Поиск картинок"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/rvMarsPhotos"
         android:layout_margin="10dp"
-
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-<!--        app:endIconMode="clear_text"-->
+        android:hint="Поиск картинок"
+        app:layout_constraintBottom_toTopOf="@id/rvMarsPhotos"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSearch"
@@ -32,22 +31,22 @@
         android:id="@+id/rvMarsPhotos"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tilSearch"
-        android:visibility="visible"/>
+        app:layout_constraintTop_toBottomOf="@id/tilSearch" />
 
     <TextView
         android:id="@+id/tvEmptyList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Ничего не найдено"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tilSearch"
-        android:text="Ничего не найдено"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toBottomOf="@id/tilSearch" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,11 +9,14 @@ interface PhotosService {
 
     @GET("?image_type=photo&key=$API_KEY")
     fun getPhotos(
-        @Query("q") query: String,
-        @Query("page") page: Int = 1,
+        @Query(VALUE_QUERY) query: String,
+        @Query(VALUE_PAGE) page: Int = FIRST_PAGE,
     ): Call<HitsResponseApi>
 
     companion object {
         const val API_KEY = "23542045-e66ff76ab11368fd9f4fd2afe"
+        const val FIRST_PAGE = 1
+        const val VALUE_QUERY = "q"
+        const val VALUE_PAGE = "page"
     }
 }

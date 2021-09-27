@@ -1,6 +1,5 @@
 package com.evgenii.searchphoto.presentation.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
@@ -18,7 +17,6 @@ class PhotosAdapter(
             parent,
             false
         )
-        Log.i("myLogs", "initiii")
         return PhotosListViewHolder(binding)
     }
 

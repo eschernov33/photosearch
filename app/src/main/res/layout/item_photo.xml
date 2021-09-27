@@ -84,16 +84,16 @@
             app:layout_constraintStart_toEndOf="@id/tvPopulationTitle"
             app:layout_constraintTop_toTopOf="@id/tvPopulationTitle"
             tools:text="2 000 000" />
+
         <ImageView
             android:id="@+id/ivLike"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_like"
-            app:layout_constraintTop_toTopOf="@id/tvPopulation"
             app:layout_constraintBottom_toBottomOf="@id/tvPopulation"
             app:layout_constraintEnd_toStartOf="@id/tvSquare"
             app:layout_constraintStart_toEndOf="@id/tvPopulation"
-             />
+            app:layout_constraintTop_toTopOf="@id/tvPopulation" />
 
         <TextView
             android:id="@+id/tvSquare"

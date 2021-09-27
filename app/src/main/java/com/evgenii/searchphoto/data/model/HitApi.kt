@@ -2,7 +2,7 @@ package com.evgenii.searchphoto.data.model
 
 import com.squareup.moshi.Json
 
-data class HitApi(
+class HitApi(
     val collections: Int,
     val comments: Int,
     val downloads: Int,

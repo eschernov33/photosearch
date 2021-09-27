@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PhotosList</string>
+    <string name="input_query">Введите запрос</string>
+    <string name="toast_message">"User: %s. ID: %d"</string>
 </resources>

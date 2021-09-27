@@ -7,5 +7,5 @@ data class PhotoItem(
     val likes: Int,
     val downloads: Int,
     val largeImageURL: String,
-    val tags: String
+    val tags: String,
 )

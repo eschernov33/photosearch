@@ -1,7 +1,7 @@
 package com.evgenii.searchphoto.data.model
 
-data class HitsResponseApi(
+class HitsResponseApi(
     val hits: List<HitApi>,
     val total: Int,
-    val totalHits: Int
+    val totalHits: Int,
 )
