@@ -11,7 +11,7 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clItemCityContent"
+        android:id="@+id/clItemPhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            app:layout_constraintBottom_toTopOf="@id/tvCountryName"
+            app:layout_constraintBottom_toTopOf="@id/tvPhotoTag"
             app:layout_constraintStart_toEndOf="@id/ivUserIcon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.4"
@@ -39,79 +39,81 @@
             tools:text="Johnny" />
 
         <TextView
-            android:id="@+id/tvCountryName"
+            android:id="@+id/tvPhotoTag"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            app:layout_constraintBottom_toTopOf="@id/ivCityCard"
+            app:layout_constraintBottom_toTopOf="@id/ivPhotoCard"
             app:layout_constraintStart_toStartOf="@id/tvUserName"
             app:layout_constraintTop_toBottomOf="@id/tvUserName"
-            tools:text="Raiting *****" />
+            tools:text="Photo, tags" />
 
         <ImageView
-            android:id="@+id/ivCityCard"
+            android:id="@+id/ivPhotoCard"
             android:layout_width="0dp"
             android:layout_height="200dp"
             android:layout_marginTop="8dp"
-            android:contentDescription="content_description_city_img"
+            android:contentDescription="@string/content_description_photo"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvCountryName" />
+            app:layout_constraintTop_toBottomOf="@id/tvPhotoTag" />
 
         <ImageView
-            android:id="@+id/tvPopulationTitle"
+            android:id="@+id/ivIconDownload"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginVertical="10dp"
             android:layout_marginStart="16dp"
+            android:contentDescription="@string/content_description_icon_download"
             android:src="@drawable/ic_download"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tvPopulation"
+            app:layout_constraintEnd_toStartOf="@id/tvPhotoDownloads"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivCityCard" />
+            app:layout_constraintTop_toBottomOf="@id/ivPhotoCard" />
 
         <TextView
-            android:id="@+id/tvPopulation"
+            android:id="@+id/tvPhotoDownloads"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="6dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            app:layout_constraintBottom_toBottomOf="@id/tvPopulationTitle"
-            app:layout_constraintEnd_toStartOf="@id/ivLike"
+            app:layout_constraintBottom_toBottomOf="@id/ivIconDownload"
+            app:layout_constraintEnd_toStartOf="@id/ivIconPhotoLike"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/tvPopulationTitle"
-            app:layout_constraintTop_toTopOf="@id/tvPopulationTitle"
+            app:layout_constraintStart_toEndOf="@id/ivIconDownload"
+            app:layout_constraintTop_toTopOf="@id/ivIconDownload"
             tools:text="2 000 000" />
 
         <ImageView
-            android:id="@+id/ivLike"
+            android:id="@+id/ivIconPhotoLike"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:contentDescription="@string/content_description_icon_likes"
             android:src="@drawable/ic_like"
-            app:layout_constraintBottom_toBottomOf="@id/tvPopulation"
-            app:layout_constraintEnd_toStartOf="@id/tvSquare"
-            app:layout_constraintStart_toEndOf="@id/tvPopulation"
-            app:layout_constraintTop_toTopOf="@id/tvPopulation" />
+            app:layout_constraintBottom_toBottomOf="@id/tvPhotoDownloads"
+            app:layout_constraintEnd_toStartOf="@id/tvPhotoLikeCount"
+            app:layout_constraintStart_toEndOf="@id/tvPhotoDownloads"
+            app:layout_constraintTop_toTopOf="@id/tvPhotoDownloads" />
 
         <TextView
-            android:id="@+id/tvSquare"
+            android:id="@+id/tvPhotoLikeCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="16dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            app:layout_constraintBottom_toBottomOf="@id/tvPopulationTitle"
+            app:layout_constraintBottom_toBottomOf="@id/tvPhotoDownloads"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/ivLike"
-            app:layout_constraintTop_toTopOf="@id/tvPopulationTitle"
+            app:layout_constraintStart_toEndOf="@id/ivIconPhotoLike"
+            app:layout_constraintTop_toTopOf="@id/tvPhotoDownloads"
             tools:text="2,5k" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="tvUserName,tvCountryName" />
+            app:constraint_referenced_ids="tvUserName,tvPhotoTag" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

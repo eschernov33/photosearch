@@ -13,6 +13,7 @@ interface PhotosListContract {
         fun setListVisible(visible: Boolean)
         fun clearPhotosList()
         fun setErrorMessage(@StringRes msg: Int)
+        fun hideSoftKeyboard()
     }
 
     interface Presenter {

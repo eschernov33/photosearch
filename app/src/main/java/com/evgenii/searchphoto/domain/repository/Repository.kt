@@ -18,6 +18,7 @@ class Repository(retrofit: Retrofit) {
     fun loadInitialPhotoList(
         query: String,
         callback: PageKeyedDataSource.LoadInitialCallback<Int, PhotoItem>,
+        onError: () -> Unit
     ) {
         val callHitsResponseApi = photosService.getPhotos(query, FIRST_PAGE)
         callHitsResponseApi.enqueue(object : Callback<HitsResponseApi> {
@@ -26,18 +27,20 @@ class Repository(retrofit: Retrofit) {
                 response: Response<HitsResponseApi>,
             ) {
                 val listHits = response.body()
-                if (listHits != null) {
+                if (listHits != null && listHits.hits.isNotEmpty()) {
                     callback.onResult(
                         mapper.mapFromHitList(listHits.hits),
                         null,
                         FIRST_PAGE + 1
                     )
                 } else {
+                    onError()
                     callback.onResult(emptyList(), null, null)
                 }
             }
 
             override fun onFailure(call: Call<HitsResponseApi>, t: Throwable) {
+                onError()
                 callback.onResult(emptyList(), null, null)
             }
         })
@@ -47,6 +50,7 @@ class Repository(retrofit: Retrofit) {
         query: String,
         page: Int,
         callback: PageKeyedDataSource.LoadCallback<Int, PhotoItem>,
+        onError: () -> Unit
     ) {
         val callHitsResponseApi = photosService.getPhotos(query, page)
         callHitsResponseApi.enqueue(object : Callback<HitsResponseApi> {
@@ -55,7 +59,7 @@ class Repository(retrofit: Retrofit) {
                 response: Response<HitsResponseApi>,
             ) {
                 val listHits = response.body()
-                if (listHits != null) {
+                if (listHits != null && listHits.hits.isNotEmpty()) {
                     callback.onResult(mapper.mapFromHitList(listHits.hits), page + 1)
                 } else {
                     callback.onResult(emptyList(), null)
@@ -63,6 +67,7 @@ class Repository(retrofit: Retrofit) {
             }
 
             override fun onFailure(call: Call<HitsResponseApi>, t: Throwable) {
+                onError()
                 callback.onResult(emptyList(), null)
             }
         })

@@ -15,11 +15,11 @@ class PhotosListViewHolder(private val binding: ItemPhotoBinding) :
     ) {
         with(binding) {
             tvUserName.text = photo.user
-            tvCountryName.text = photo.tags
-            tvPopulation.text = photo.downloads.toString()
-            tvSquare.text = photo.likes.toString()
+            tvPhotoTag.text = photo.tags
+            tvPhotoDownloads.text = photo.downloads.toString()
+            tvPhotoLikeCount.text = photo.likes.toString()
             setImage(ivUserIcon, photo.userImageURL)
-            setImage(ivCityCard, photo.largeImageURL)
+            setImage(ivPhotoCard, photo.largeImageURL)
             root.setOnClickListener {
                 onItemClick(photo)
             }

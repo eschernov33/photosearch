@@ -28,16 +28,20 @@ class PhotosListPresenter(
         textSearch: String,
         lifecycleOwner: LifecycleOwner,
     ) {
-        val dataSourceFactory = DataSourceFactory(retrofit, textSearch)
+        val dataSourceFactory = DataSourceFactory(retrofit, textSearch) {
+            view.clearPhotosList()
+            view.setErrorMessage(R.string.error_empty_result)
+        }
         val pageListConfig = PagedList.Config.Builder()
+            .setEnablePlaceholders(true)
             .setPageSize(PAGE_SIZE)
             .setPrefetchDistance(PREFETCH_DISTANCE)
             .build()
         val liveDataPhotos =
             LivePagedListBuilder(dataSourceFactory, pageListConfig).build()
-
         liveDataPhotos.observe(lifecycleOwner) { pagedList ->
             view.showPhotosList(pagedList)
+            view.hideSoftKeyboard()
         }
     }
 

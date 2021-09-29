@@ -1,10 +1,12 @@
 package com.evgenii.searchphoto.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -46,7 +48,7 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
     }
 
     private fun initPhotoListAdapter() {
-        binding.rvMarsPhotos.adapter = adapter
+        binding.rvPhotoList.adapter = adapter
     }
 
     private fun initPresenter() {
@@ -59,7 +61,7 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 presenter.onSearchApply(
                     binding.etSearch.text.toString(),
-                    this
+                    viewLifecycleOwner
                 )
                 true
             } else
@@ -68,21 +70,36 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
     }
 
     override fun setListVisible(visible: Boolean) {
-        binding.rvMarsPhotos.isVisible = visible
+        binding.rvPhotoList.isVisible = visible
     }
 
-    override fun showPhotosList(pagedList: PagedList<PhotoItem>) =
+    override fun showPhotosList(pagedList: PagedList<PhotoItem>) {
         adapter.submitList(pagedList)
+    }
 
     override fun showToast(user: String, photoId: Int) =
-        Toast.makeText(requireContext(),
+        Toast.makeText(
+            requireContext(),
             getString(R.string.toast_message, user, photoId),
-            Toast.LENGTH_SHORT).show()
+            Toast.LENGTH_SHORT
+        ).show()
 
     override fun clearPhotosList() =
         adapter.submitList(null)
 
     override fun setErrorMessage(msg: Int) {
         binding.etSearch.error = resources.getString(msg)
+    }
+
+    override fun hideSoftKeyboard() {
+        val inputMethodManager: InputMethodManager = requireContext().getSystemService(
+            Context.INPUT_METHOD_SERVICE
+        ) as InputMethodManager
+        if (inputMethodManager.isAcceptingText) {
+            inputMethodManager.hideSoftInputFromWindow(
+                requireView().windowToken,
+                0
+            )
+        }
     }
 }

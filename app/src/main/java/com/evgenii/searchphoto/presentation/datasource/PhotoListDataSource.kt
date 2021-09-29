@@ -8,6 +8,7 @@ import retrofit2.Retrofit
 class PhotoListDataSource(
     retrofit: Retrofit,
     private val query: String,
+    private val onError: () -> Unit
 ) : PageKeyedDataSource<Int, PhotoItem>() {
 
     private val repository: Repository = Repository(retrofit)
@@ -16,12 +17,12 @@ class PhotoListDataSource(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, PhotoItem>,
     ) =
-        repository.loadInitialPhotoList(query, callback)
+        repository.loadInitialPhotoList(query, callback, onError)
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, PhotoItem>) {
 
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, PhotoItem>) =
-        repository.loadAfterPhotoList(query, params.key, callback)
+        repository.loadAfterPhotoList(query, params.key, callback, onError)
 }
