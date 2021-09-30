@@ -7,16 +7,9 @@ import retrofit2.http.Query
 
 interface PhotosService {
 
-    @GET("?image_type=photo&key=$API_KEY")
+    @GET("?image_type=photo&key=${Constants.API_KEY}")
     fun getPhotos(
-        @Query(VALUE_QUERY) query: String,
-        @Query(VALUE_PAGE) page: Int = FIRST_PAGE,
+        @Query("q") query: String,
+        @Query("page") page: Int,
     ): Call<HitsResponseApi>
-
-    companion object {
-        const val API_KEY = "23542045-e66ff76ab11368fd9f4fd2afe"
-        const val FIRST_PAGE = 1
-        const val VALUE_QUERY = "q"
-        const val VALUE_PAGE = "page"
-    }
 }

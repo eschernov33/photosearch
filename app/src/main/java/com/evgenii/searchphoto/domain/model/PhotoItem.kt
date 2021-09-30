@@ -1,6 +1,6 @@
 package com.evgenii.searchphoto.domain.model
 
-data class PhotoItem(
+class PhotoItem(
     val id: Int,
     val user: String,
     val userImageURL: String,

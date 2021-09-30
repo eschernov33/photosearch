@@ -43,30 +43,23 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initPhotoListAdapter()
-        initPresenter()
         setEditTextListener()
+        initPresenter()
+        retainInstance = true
+        presenter.init(savedInstanceState)
     }
 
-    private fun initPhotoListAdapter() {
-        binding.rvPhotoList.adapter = adapter
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        presenter.onRestartLayout(outState)
     }
 
-    private fun initPresenter() {
-        val app = requireContext().applicationContext as App
-        presenter = PhotosListPresenter(this, app.retrofit)
+    override fun showProgressBar() {
+        binding.progressBarLoadPhotos.isVisible = true
     }
 
-    private fun setEditTextListener() {
-        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                presenter.onSearchApply(
-                    binding.etSearch.text.toString(),
-                    viewLifecycleOwner
-                )
-                true
-            } else
-                false
-        }
+    override fun hideProgressLoading() {
+        binding.progressBarLoadPhotos.isVisible = false
     }
 
     override fun setListVisible(visible: Boolean) {
@@ -100,6 +93,28 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
                 requireView().windowToken,
                 0
             )
+        }
+    }
+
+    private fun initPhotoListAdapter() {
+        binding.rvPhotoList.adapter = adapter
+    }
+
+    private fun initPresenter() {
+        val app = requireContext().applicationContext as App
+        presenter = PhotosListPresenter(this, app.photoSearchRepository)
+    }
+
+    private fun setEditTextListener() {
+        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                presenter.onSearchApply(
+                    binding.etSearch.text.toString(),
+                    viewLifecycleOwner
+                )
+                true
+            } else
+                false
         }
     }
 }

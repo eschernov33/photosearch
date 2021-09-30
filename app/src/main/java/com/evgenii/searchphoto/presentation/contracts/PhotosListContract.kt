@@ -1,5 +1,6 @@
 package com.evgenii.searchphoto.presentation.contracts
 
+import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
@@ -14,10 +15,14 @@ interface PhotosListContract {
         fun clearPhotosList()
         fun setErrorMessage(@StringRes msg: Int)
         fun hideSoftKeyboard()
+        fun hideProgressLoading()
+        fun showProgressBar()
     }
 
     interface Presenter {
         fun onItemClick(photoItem: PhotoItem)
         fun onSearchApply(textSearch: String, lifecycleOwner: LifecycleOwner)
+        fun init(savedInstanceState: Bundle?)
+        fun onRestartLayout(outState: Bundle)
     }
 }

@@ -2,15 +2,16 @@ package com.evgenii.searchphoto.presentation.datasource
 
 import androidx.paging.DataSource
 import com.evgenii.searchphoto.domain.model.PhotoItem
-import retrofit2.Retrofit
+import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
 
 class DataSourceFactory(
-    private val retrofit: Retrofit,
+    private val photoSearchRepository: PhotoSearchRepository,
     private val query: String,
-    private val onError: () -> Unit
+    private val onError: () -> Unit,
+    private val onLoad: () -> Unit,
 ) : DataSource.Factory<Int, PhotoItem>() {
 
     override fun create(): DataSource<Int, PhotoItem> {
-        return PhotoListDataSource(retrofit, query, onError)
+        return PhotoListDataSource(photoSearchRepository, query, onError, onLoad)
     }
 }

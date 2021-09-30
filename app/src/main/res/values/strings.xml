@@ -1,10 +1,11 @@
 <resources>
     <string name="app_name">PhotosList</string>
-    <string name="input_query">Введите запрос</string>
+    <string name="input_query">Input text</string>
     <string name="toast_message">"User: %s. ID: %d"</string>
-    <string name="content_description_photo">Фотография</string>
-    <string name="content_description_icon_download">Иконка загрузок</string>
-    <string name="content_description_icon_likes">Иконка лайков</string>
-    <string name="hint_photo_search">Поиск картинок</string>
-    <string name="error_empty_result">Ничего не найдено</string>
+    <string name="content_description_photo">Photo</string>
+    <string name="content_description_icon_download">Download icon</string>
+    <string name="content_description_icon_likes">Like icon</string>
+    <string name="hint_photo_search">Search pictures</string>
+    <string name="error_empty_result">Nothing found</string>
+    <string name="content_description_logo">Logotype</string>
 </resources>

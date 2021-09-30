@@ -1,4 +1,4 @@
-package com.evgenii.searchphoto.presentation.viewholders
+package com.evgenii.searchphoto.presentation.adapters.viewholders
 
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView

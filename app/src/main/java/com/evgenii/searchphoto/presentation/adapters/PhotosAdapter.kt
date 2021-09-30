@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import com.evgenii.searchphoto.databinding.ItemPhotoBinding
 import com.evgenii.searchphoto.domain.model.PhotoItem
-import com.evgenii.searchphoto.presentation.viewholders.PhotosListViewHolder
+import com.evgenii.searchphoto.presentation.adapters.viewholders.PhotosListViewHolder
 
 class PhotosAdapter(
     private val onItemClick: (photoItem: PhotoItem) -> Unit,
@@ -22,7 +22,8 @@ class PhotosAdapter(
 
     override fun onBindViewHolder(holder: PhotosListViewHolder, position: Int) {
         val photo = getItem(position)
-        if (photo != null)
+        if (photo != null) {
             holder.bind(photo, onItemClick)
+        }
     }
 }
