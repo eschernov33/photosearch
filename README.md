@@ -4,7 +4,7 @@
 > Тестовое приложение на основе архитектуры CA и MVP паттерна, с использованием retrofit и moshi для загрузки данных из API.
 > Данные загружаются постранично с помощью Paging Library. 
 
-<div style="text-align:center">
+<div align="center" style="text-align:center">
     <img src="https://user-images.githubusercontent.com/61781958/135451224-e6714a9a-5a79-4a20-9550-8684cec6ad17.png" height="450px"/>
     <img src="https://user-images.githubusercontent.com/61781958/135575719-be5613db-322a-40da-80f3-72a955be74c9.jpg" height="450px"/>
 </div>
