@@ -9,10 +9,10 @@ import com.evgenii.searchphoto.domain.model.PhotoItem
 interface PhotosListContract {
 
     interface View {
-        fun showPhotoList(pagedList: PagedList<PhotoItem>)
-        fun showToast(user: String, photoId: Int)
         fun setListVisible(visible: Boolean)
+        fun showPhotoList(pagedList: PagedList<PhotoItem>)
         fun clearPhotosList()
+        fun showToast(user: String, photoId: Int)
         fun setErrorMessage(@StringRes msg: Int)
         fun hideSoftKeyboard()
         fun hideProgressBar()
@@ -20,9 +20,9 @@ interface PhotosListContract {
     }
 
     interface Presenter {
+        fun init(savedInstanceState: Bundle?)
         fun onItemClick(photoItem: PhotoItem)
         fun onSearchApply(textSearch: String, lifecycleOwner: LifecycleOwner)
-        fun init(savedInstanceState: Bundle?)
         fun onRestartLayout(outState: Bundle)
     }
 }

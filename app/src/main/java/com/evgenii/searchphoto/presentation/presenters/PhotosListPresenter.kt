@@ -5,8 +5,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.evgenii.searchphoto.R
-import com.evgenii.searchphoto.data.mapper.ApiMapperImpl
-import com.evgenii.searchphoto.data.model.HitApiList
 import com.evgenii.searchphoto.domain.model.LoadResult
 import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
@@ -15,12 +13,10 @@ import com.evgenii.searchphoto.presentation.datasource.DataSourceFactory
 
 class PhotosListPresenter(
     private val view: PhotosListContract.View,
-    private val photoSearchRepository: PhotoSearchRepository<HitApiList>
+    private val photoSearchRepository: PhotoSearchRepository
 ) : PhotosListContract.Presenter {
 
     private var isVisibleList = false
-
-    private val mapper = ApiMapperImpl()
 
     override fun init(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
@@ -47,13 +43,10 @@ class PhotosListPresenter(
         outState.putBoolean(KEY_LIST_VISIBLE, isVisibleList)
     }
 
-    private fun searchPhotos(
-        textSearch: String,
-        lifecycleOwner: LifecycleOwner,
-    ) {
+    private fun searchPhotos(textSearch: String, lifecycleOwner: LifecycleOwner) {
         view.showProgressBar()
         val dataSourceFactory =
-            DataSourceFactory(photoSearchRepository, mapper, textSearch) { loadResult ->
+            DataSourceFactory(photoSearchRepository, textSearch) { loadResult ->
                 if (loadResult == LoadResult.EMPTY || loadResult == LoadResult.ERROR) {
                     view.clearPhotosList()
                     view.setErrorMessage(R.string.error_empty_result)
@@ -64,8 +57,7 @@ class PhotosListPresenter(
             .setPageSize(PAGE_SIZE)
             .setPrefetchDistance(PREFETCH_DISTANCE)
             .build()
-        val liveDataPhotos =
-            LivePagedListBuilder(dataSourceFactory, pageListConfig).build()
+        val liveDataPhotos = LivePagedListBuilder(dataSourceFactory, pageListConfig).build()
         liveDataPhotos.observe(lifecycleOwner) { pagedList ->
             view.showPhotoList(pagedList)
             view.hideSoftKeyboard()

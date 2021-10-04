@@ -1,8 +1,13 @@
 package com.evgenii.searchphoto.domain.repository
 
-import retrofit2.Call
+import com.evgenii.searchphoto.domain.model.PhotoItem
 
-interface PhotoSearchRepository<T> {
+interface PhotoSearchRepository {
 
-    fun getPhotos(query: String, page: Int): Call<T>
+    fun getPhotos(
+        query: String,
+        page: Int,
+        onResponse: (List<PhotoItem>) -> Unit,
+        onFailure: (t: Throwable) -> Unit
+    )
 }

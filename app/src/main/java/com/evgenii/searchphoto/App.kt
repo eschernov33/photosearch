@@ -22,6 +22,6 @@ class App : Application() {
     }
 
     companion object {
-        const val API_PIXABAY_URL = "https://pixabay.com/api/"
+        private const val API_PIXABAY_URL = "https://pixabay.com/api/"
     }
 }

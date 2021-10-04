@@ -1,28 +1,26 @@
 package com.evgenii.searchphoto.presentation.datasource
 
 import androidx.paging.PageKeyedDataSource
-import com.evgenii.searchphoto.domain.mapper.ApiMapper
 import com.evgenii.searchphoto.domain.model.LoadResult
 import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
 import com.evgenii.searchphoto.domain.usecases.LoadAfterPhotoListUseCase
 import com.evgenii.searchphoto.domain.usecases.LoadInitialPhotoListUseCase
 
-class PhotoListDataSource<T>(
-    photoSearchRepository: PhotoSearchRepository<T>,
-    mapperImpl: ApiMapper<T>,
+class PhotoListDataSource(
+    photoSearchRepository: PhotoSearchRepository,
     private val query: String,
     private val onLoadResult: (result: LoadResult) -> Unit
 ) : PageKeyedDataSource<Int, PhotoItem>() {
 
     private val loadInitialPhotoListUseCase =
-        LoadInitialPhotoListUseCase(photoSearchRepository, mapperImpl)
+        LoadInitialPhotoListUseCase(photoSearchRepository)
     private val loadAfterPhotoListUseCase =
-        LoadAfterPhotoListUseCase(photoSearchRepository, mapperImpl)
+        LoadAfterPhotoListUseCase(photoSearchRepository)
 
     override fun loadInitial(
         params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, PhotoItem>,
+        callback: LoadInitialCallback<Int, PhotoItem>
     ) =
         loadInitialPhotoListUseCase.execute(callback, query, FIRST_PAGE, onLoadResult)
 

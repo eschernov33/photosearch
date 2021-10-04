@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.paging.PagedList
 import com.evgenii.searchphoto.App
 import com.evgenii.searchphoto.R
-import com.evgenii.searchphoto.data.model.HitApiList
 import com.evgenii.searchphoto.databinding.PhotosListFragmentBinding
 import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.presentation.adapters.PhotosAdapter
@@ -46,13 +45,42 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
         initPhotoListAdapter()
         setEditTextListener()
         initPresenter()
+        //Ignored warning about deprecated function due to the prohibition to use the recommended
+        //viewmodel in the current project
         retainInstance = true
         presenter.init(savedInstanceState)
+    }
+
+    private fun initPhotoListAdapter() {
+        binding.rvPhotoList.adapter = adapter
+    }
+
+    private fun setEditTextListener() {
+        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                presenter.onSearchApply(
+                    binding.etSearch.text.toString(),
+                    viewLifecycleOwner
+                )
+                true
+            } else
+                false
+        }
+    }
+
+    private fun initPresenter() {
+        val app = requireContext().applicationContext as App
+        presenter = PhotosListPresenter(this, app.photoSearchRepository)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         presenter.onRestartLayout(outState)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     override fun showProgressBar() {
@@ -78,8 +106,9 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
             Toast.LENGTH_SHORT
         ).show()
 
-    override fun clearPhotosList() =
+    override fun clearPhotosList() {
         adapter.submitList(null)
+    }
 
     override fun setErrorMessage(msg: Int) {
         binding.etSearch.error = resources.getString(msg)
@@ -94,28 +123,6 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
                 requireView().windowToken,
                 0
             )
-        }
-    }
-
-    private fun initPhotoListAdapter() {
-        binding.rvPhotoList.adapter = adapter
-    }
-
-    private fun initPresenter() {
-        val app = requireContext().applicationContext as App
-        presenter = PhotosListPresenter<HitApiList>(this, app.photoSearchRepository)
-    }
-
-    private fun setEditTextListener() {
-        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                presenter.onSearchApply(
-                    binding.etSearch.text.toString(),
-                    viewLifecycleOwner
-                )
-                true
-            } else
-                false
         }
     }
 }
