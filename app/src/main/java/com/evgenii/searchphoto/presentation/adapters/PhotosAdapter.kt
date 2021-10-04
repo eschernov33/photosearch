@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import com.evgenii.searchphoto.databinding.ItemPhotoBinding
-import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.presentation.adapters.viewholders.PhotosListViewHolder
+import com.evgenii.searchphoto.presentation.model.PhotoItem
 
 class PhotosAdapter(
     private val onItemClick: (photoItem: PhotoItem) -> Unit,

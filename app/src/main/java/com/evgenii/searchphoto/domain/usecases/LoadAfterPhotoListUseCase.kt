@@ -2,7 +2,7 @@ package com.evgenii.searchphoto.domain.usecases
 
 import androidx.paging.PageKeyedDataSource
 import com.evgenii.searchphoto.domain.model.LoadResult
-import com.evgenii.searchphoto.domain.model.PhotoItem
+import com.evgenii.searchphoto.domain.model.Photo
 import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
 
 class LoadAfterPhotoListUseCase(
@@ -10,12 +10,12 @@ class LoadAfterPhotoListUseCase(
 ) {
 
     fun execute(
-        callback: PageKeyedDataSource.LoadCallback<Int, PhotoItem>,
+        callback: PageKeyedDataSource.LoadCallback<Int, Photo>,
         query: String,
         page: Int,
         onLoadResult: (result: LoadResult) -> Unit
     ) {
-        val onResponse: (List<PhotoItem>) -> Unit = { photoList ->
+        val onResponse: (List<Photo>) -> Unit = { photoList ->
             if (photoList.isEmpty()) {
                 callback.onResult(emptyList(), null)
             } else {

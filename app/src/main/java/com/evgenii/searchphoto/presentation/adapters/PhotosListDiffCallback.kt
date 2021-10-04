@@ -1,7 +1,7 @@
 package com.evgenii.searchphoto.presentation.adapters
 
 import androidx.recyclerview.widget.DiffUtil
-import com.evgenii.searchphoto.domain.model.PhotoItem
+import com.evgenii.searchphoto.presentation.model.PhotoItem
 
 class PhotosListDiffCallback : DiffUtil.ItemCallback<PhotoItem>() {
 

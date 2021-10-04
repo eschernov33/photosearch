@@ -2,12 +2,12 @@ package com.evgenii.searchphoto.data.mapper
 
 import com.evgenii.searchphoto.data.model.HitApi
 import com.evgenii.searchphoto.data.model.HitApiList
-import com.evgenii.searchphoto.domain.model.PhotoItem
+import com.evgenii.searchphoto.domain.model.Photo
 
 class ApiMapper {
 
-    private fun mapHitApiToEntity(hitApi: HitApi): PhotoItem =
-        PhotoItem(
+    private fun mapHitApiToEntity(hitApi: HitApi): Photo =
+        Photo(
             hitApi.id,
             hitApi.user,
             hitApi.userImageURL,
@@ -17,7 +17,7 @@ class ApiMapper {
             hitApi.tags
         )
 
-    fun mapHitApiListToEntity(hitApi: HitApiList): List<PhotoItem> =
+    fun mapHitApiListToEntity(hitApi: HitApiList): List<Photo> =
         hitApi.hits.map(this::mapHitApiToEntity)
 
 }

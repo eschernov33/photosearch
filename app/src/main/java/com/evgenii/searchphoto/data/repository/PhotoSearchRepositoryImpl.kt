@@ -4,7 +4,7 @@ import com.evgenii.searchphoto.data.mapper.ApiMapper
 import com.evgenii.searchphoto.data.model.HitApiList
 import com.evgenii.searchphoto.data.service.Constants
 import com.evgenii.searchphoto.data.service.PhotosService
-import com.evgenii.searchphoto.domain.model.PhotoItem
+import com.evgenii.searchphoto.domain.model.Photo
 import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -30,7 +30,7 @@ class PhotoSearchRepositoryImpl : PhotoSearchRepository {
     override fun getPhotos(
         query: String,
         page: Int,
-        onResponse: (List<PhotoItem>) -> Unit,
+        onResponse: (List<Photo>) -> Unit,
         onFailure: (t: Throwable) -> Unit
     ) {
         val responseCall = photosService.getPhotos(query, page)

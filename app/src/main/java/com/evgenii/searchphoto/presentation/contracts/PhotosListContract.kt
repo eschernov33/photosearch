@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
-import com.evgenii.searchphoto.domain.model.PhotoItem
+import com.evgenii.searchphoto.presentation.model.PhotoItem
 
 interface PhotosListContract {
 
@@ -21,7 +21,7 @@ interface PhotosListContract {
 
     interface Presenter {
         fun init(savedInstanceState: Bundle?)
-        fun onItemClick(photoItem: PhotoItem)
+        fun onItemClick(photo: PhotoItem)
         fun onSearchApply(textSearch: String, lifecycleOwner: LifecycleOwner)
         fun onRestartLayout(outState: Bundle)
     }

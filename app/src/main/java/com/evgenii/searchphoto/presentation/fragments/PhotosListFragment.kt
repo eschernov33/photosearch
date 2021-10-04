@@ -14,9 +14,9 @@ import androidx.paging.PagedList
 import com.evgenii.searchphoto.App
 import com.evgenii.searchphoto.R
 import com.evgenii.searchphoto.databinding.PhotosListFragmentBinding
-import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.presentation.adapters.PhotosAdapter
 import com.evgenii.searchphoto.presentation.contracts.PhotosListContract
+import com.evgenii.searchphoto.presentation.model.PhotoItem
 import com.evgenii.searchphoto.presentation.presenters.PhotosListPresenter
 
 class PhotosListFragment : Fragment(), PhotosListContract.View {

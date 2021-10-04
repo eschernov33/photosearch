@@ -2,14 +2,16 @@ package com.evgenii.searchphoto.presentation.presenters
 
 import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
+import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.evgenii.searchphoto.R
 import com.evgenii.searchphoto.domain.model.LoadResult
-import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
 import com.evgenii.searchphoto.presentation.contracts.PhotosListContract
 import com.evgenii.searchphoto.presentation.datasource.DataSourceFactory
+import com.evgenii.searchphoto.presentation.mapper.PhotoItemMapper
+import com.evgenii.searchphoto.presentation.model.PhotoItem
 
 class PhotosListPresenter(
     private val view: PhotosListContract.View,
@@ -18,6 +20,8 @@ class PhotosListPresenter(
 
     private var isVisibleList = false
     private var isLoading = false
+
+    private val mapper = PhotoItemMapper()
 
     override fun init(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
@@ -39,8 +43,8 @@ class PhotosListPresenter(
             searchPhotos(textSearch, lifecycleOwner)
         }
 
-    override fun onItemClick(photoItem: PhotoItem) =
-        view.showToast(photoItem.user, photoItem.id)
+    override fun onItemClick(photo: PhotoItem) =
+        view.showToast(photo.user, photo.id)
 
     override fun onRestartLayout(outState: Bundle) {
         outState.putBoolean(KEY_LIST_VISIBLE, isVisibleList)
@@ -48,25 +52,38 @@ class PhotosListPresenter(
     }
 
     private fun searchPhotos(textSearch: String, lifecycleOwner: LifecycleOwner) {
-        view.showProgressBar()
-        isLoading = true
-        val dataSourceFactory =
-            DataSourceFactory(photoSearchRepository, textSearch) { loadResult ->
-                if (loadResult == LoadResult.EMPTY || loadResult == LoadResult.ERROR) {
-                    view.clearPhotosList()
-                    view.setErrorMessage(R.string.error_empty_result)
-                }
-                view.hideProgressBar()
-                isLoading = false
-            }
-        val pageListConfig = PagedList.Config.Builder()
-            .setPageSize(PAGE_SIZE)
-            .setPrefetchDistance(PREFETCH_DISTANCE)
-            .build()
-        val liveDataPhotos = LivePagedListBuilder(dataSourceFactory, pageListConfig).build()
+        showProgressBar()
+        val pagedListConfig = getPagedListConfig()
+        val dataSourceFactory = getDataSourceFactory(textSearch)
+        val liveDataPhotos = LivePagedListBuilder(dataSourceFactory, pagedListConfig).build()
         liveDataPhotos.observe(lifecycleOwner) { pagedList ->
             view.showPhotoList(pagedList)
             view.hideSoftKeyboard()
+        }
+    }
+
+    private fun showProgressBar() {
+        view.showProgressBar()
+        isLoading = true
+    }
+
+    private fun getPagedListConfig(): PagedList.Config =
+        PagedList.Config.Builder()
+            .setPageSize(PAGE_SIZE)
+            .setPrefetchDistance(PREFETCH_DISTANCE)
+            .build()
+
+    private fun getDataSourceFactory(textSearch: String): DataSource.Factory<Int, PhotoItem> {
+        val onLoadResult: (result: LoadResult) -> Unit = { loadResult ->
+            if (loadResult == LoadResult.EMPTY || loadResult == LoadResult.ERROR) {
+                view.clearPhotosList()
+                view.setErrorMessage(R.string.error_empty_result)
+            }
+            view.hideProgressBar()
+            isLoading = false
+        }
+        return DataSourceFactory(photoSearchRepository, textSearch, onLoadResult).map { photo ->
+            mapper.mapPhotoToPhotoItem(photo)
         }
     }
 
