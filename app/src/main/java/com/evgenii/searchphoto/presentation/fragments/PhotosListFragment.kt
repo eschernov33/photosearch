@@ -45,8 +45,8 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
         initPhotoListAdapter()
         setEditTextListener()
         initPresenter()
-        //Ignored warning about deprecated function due to the prohibition to use the recommended
-        //viewmodel in the current project
+        //TODO Ignored warning about deprecated function due to the prohibition to use the
+        // recommended viewmodel in the current project
         retainInstance = true
         presenter.init(savedInstanceState)
     }
