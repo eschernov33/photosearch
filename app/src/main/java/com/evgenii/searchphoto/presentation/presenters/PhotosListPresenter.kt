@@ -6,6 +6,7 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.evgenii.searchphoto.R
 import com.evgenii.searchphoto.data.mapper.ApiMapperImpl
+import com.evgenii.searchphoto.data.model.HitApiList
 import com.evgenii.searchphoto.domain.model.LoadResult
 import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
@@ -14,7 +15,7 @@ import com.evgenii.searchphoto.presentation.datasource.DataSourceFactory
 
 class PhotosListPresenter(
     private val view: PhotosListContract.View,
-    private val photoSearchRepository: PhotoSearchRepository
+    private val photoSearchRepository: PhotoSearchRepository<HitApiList>
 ) : PhotosListContract.Presenter {
 
     private var isVisibleList = false

@@ -4,7 +4,5 @@ import com.evgenii.searchphoto.domain.model.PhotoItem
 
 interface ApiMapper<T> {
 
-    fun mapFromEntity(entityApi: T): PhotoItem
-
-    fun mapFromEntityList(entityApiList: List<T>): List<PhotoItem>
+    fun mapFromEntity(entity: T): List<PhotoItem>
 }

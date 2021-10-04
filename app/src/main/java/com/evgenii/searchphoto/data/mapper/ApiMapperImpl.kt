@@ -1,12 +1,13 @@
 package com.evgenii.searchphoto.data.mapper
 
 import com.evgenii.searchphoto.data.model.HitApi
+import com.evgenii.searchphoto.data.model.HitApiList
 import com.evgenii.searchphoto.domain.mapper.ApiMapper
 import com.evgenii.searchphoto.domain.model.PhotoItem
 
-class ApiMapperImpl : ApiMapper<HitApi> {
+class ApiMapperImpl : ApiMapper<HitApiList> {
 
-    override fun mapFromEntity(entityApi: HitApi): PhotoItem =
+    private fun mapFromItemEntity(entityApi: HitApi): PhotoItem =
         PhotoItem(
             entityApi.id,
             entityApi.user,
@@ -17,6 +18,10 @@ class ApiMapperImpl : ApiMapper<HitApi> {
             entityApi.tags
         )
 
-    override fun mapFromEntityList(entityApiList: List<HitApi>): List<PhotoItem> =
-        entityApiList.map(this::mapFromEntity)
+    private fun mapFromItemEntityList(entityApiList: List<HitApi>): List<PhotoItem> =
+        entityApiList.map(this::mapFromItemEntity)
+
+    override fun mapFromEntity(entity: HitApiList): List<PhotoItem> =
+        mapFromItemEntityList(entity.hits)
+
 }

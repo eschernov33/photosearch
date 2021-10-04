@@ -1,9 +1,8 @@
 package com.evgenii.searchphoto.domain.repository
 
-import com.evgenii.searchphoto.data.model.HitApiList
 import retrofit2.Call
 
-interface PhotoSearchRepository {
+interface PhotoSearchRepository<T> {
 
-    fun getPhotos(query: String, page: Int): Call<HitApiList>
+    fun getPhotos(query: String, page: Int): Call<T>
 }

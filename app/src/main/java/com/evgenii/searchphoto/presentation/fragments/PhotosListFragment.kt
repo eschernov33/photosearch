@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.paging.PagedList
 import com.evgenii.searchphoto.App
 import com.evgenii.searchphoto.R
+import com.evgenii.searchphoto.data.model.HitApiList
 import com.evgenii.searchphoto.databinding.PhotosListFragmentBinding
 import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.presentation.adapters.PhotosAdapter
@@ -102,7 +103,7 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
 
     private fun initPresenter() {
         val app = requireContext().applicationContext as App
-        presenter = PhotosListPresenter(this, app.photoSearchRepository)
+        presenter = PhotosListPresenter<HitApiList>(this, app.photoSearchRepository)
     }
 
     private fun setEditTextListener() {
