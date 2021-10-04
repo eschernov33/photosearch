@@ -5,6 +5,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.evgenii.searchphoto.R
+import com.evgenii.searchphoto.data.mapper.ApiMapperImpl
+import com.evgenii.searchphoto.domain.model.LoadResult
 import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
 import com.evgenii.searchphoto.presentation.contracts.PhotosListContract
@@ -16,6 +18,8 @@ class PhotosListPresenter(
 ) : PhotosListContract.Presenter {
 
     private var isVisibleList = false
+
+    private val mapper = ApiMapperImpl()
 
     override fun init(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
@@ -47,13 +51,14 @@ class PhotosListPresenter(
         lifecycleOwner: LifecycleOwner,
     ) {
         view.showProgressBar()
-        val dataSourceFactory = DataSourceFactory(photoSearchRepository, textSearch, {
-            view.clearPhotosList()
-            view.setErrorMessage(R.string.error_empty_result)
-            view.hideProgressLoading()
-        }, {
-            view.hideProgressLoading()
-        })
+        val dataSourceFactory =
+            DataSourceFactory(photoSearchRepository, mapper, textSearch) { loadResult ->
+                if (loadResult == LoadResult.EMPTY || loadResult == LoadResult.ERROR) {
+                    view.clearPhotosList()
+                    view.setErrorMessage(R.string.error_empty_result)
+                }
+                view.hideProgressBar()
+            }
         val pageListConfig = PagedList.Config.Builder()
             .setPageSize(PAGE_SIZE)
             .setPrefetchDistance(PREFETCH_DISTANCE)
@@ -61,14 +66,14 @@ class PhotosListPresenter(
         val liveDataPhotos =
             LivePagedListBuilder(dataSourceFactory, pageListConfig).build()
         liveDataPhotos.observe(lifecycleOwner) { pagedList ->
-            view.showPhotosList(pagedList)
+            view.showPhotoList(pagedList)
             view.hideSoftKeyboard()
         }
     }
 
     companion object {
-        const val PAGE_SIZE = 20
-        const val PREFETCH_DISTANCE = 10
-        const val KEY_LIST_VISIBLE = "list_visible"
+        private const val PAGE_SIZE = 20
+        private const val PREFETCH_DISTANCE = 10
+        private const val KEY_LIST_VISIBLE = "list_visible"
     }
 }

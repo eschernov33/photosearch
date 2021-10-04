@@ -9,13 +9,13 @@ import com.evgenii.searchphoto.domain.model.PhotoItem
 interface PhotosListContract {
 
     interface View {
-        fun showPhotosList(pagedList: PagedList<PhotoItem>)
+        fun showPhotoList(pagedList: PagedList<PhotoItem>)
         fun showToast(user: String, photoId: Int)
         fun setListVisible(visible: Boolean)
         fun clearPhotosList()
         fun setErrorMessage(@StringRes msg: Int)
         fun hideSoftKeyboard()
-        fun hideProgressLoading()
+        fun hideProgressBar()
         fun showProgressBar()
     }
 

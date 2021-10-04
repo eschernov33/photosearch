@@ -1,5 +1,5 @@
 package com.evgenii.searchphoto.data.model
 
-class HitsResponseApi(
+class HitApiList(
     val hits: List<HitApi>
 )

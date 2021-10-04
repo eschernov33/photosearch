@@ -27,7 +27,8 @@ class PhotosListViewHolder(private val binding: ItemPhotoBinding) :
     }
 
     private fun setImage(view: ImageView, url: String) {
-        if (url.isNotEmpty())
+        if (url.isNotEmpty()) {
             Picasso.get().load(url).into(view)
+        }
     }
 }

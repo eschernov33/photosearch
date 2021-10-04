@@ -1,6 +1,6 @@
 package com.evgenii.searchphoto.data.service
 
-import com.evgenii.searchphoto.data.model.HitsResponseApi
+import com.evgenii.searchphoto.data.model.HitApiList
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -11,5 +11,5 @@ interface PhotosService {
     fun getPhotos(
         @Query("q") query: String,
         @Query("page") page: Int,
-    ): Call<HitsResponseApi>
+    ): Call<HitApiList>
 }

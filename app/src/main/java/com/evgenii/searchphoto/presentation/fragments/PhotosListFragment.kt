@@ -58,7 +58,7 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
         binding.progressBarLoadPhotos.isVisible = true
     }
 
-    override fun hideProgressLoading() {
+    override fun hideProgressBar() {
         binding.progressBarLoadPhotos.isVisible = false
     }
 
@@ -66,7 +66,7 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
         binding.rvPhotoList.isVisible = visible
     }
 
-    override fun showPhotosList(pagedList: PagedList<PhotoItem>) {
+    override fun showPhotoList(pagedList: PagedList<PhotoItem>) {
         adapter.submitList(pagedList)
     }
 
