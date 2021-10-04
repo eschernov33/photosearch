@@ -91,27 +91,25 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
         binding.progressBarLoadPhotos.isVisible = false
     }
 
-    override fun setListVisible(visible: Boolean) {
-        binding.rvPhotoList.isVisible = visible
+    override fun setListVisible(isVisible: Boolean) {
+        binding.rvPhotoList.isVisible = isVisible
     }
 
-    override fun showPhotoList(pagedList: PagedList<PhotoItem>) {
+    override fun showPhotoList(pagedList: PagedList<PhotoItem>) =
         adapter.submitList(pagedList)
-    }
 
-    override fun showToast(user: String, photoId: Int) =
+    override fun showToast(userName: String, photoId: Int) =
         Toast.makeText(
             requireContext(),
-            getString(R.string.toast_message, user, photoId),
+            getString(R.string.toast_message, userName, photoId),
             Toast.LENGTH_SHORT
         ).show()
 
-    override fun clearPhotosList() {
+    override fun clearPhotosList() =
         adapter.submitList(null)
-    }
 
-    override fun setErrorMessage(msg: Int) {
-        binding.etSearch.error = resources.getString(msg)
+    override fun setErrorMessage(message: Int) {
+        binding.etSearch.error = resources.getString(message)
     }
 
     override fun hideSoftKeyboard() {

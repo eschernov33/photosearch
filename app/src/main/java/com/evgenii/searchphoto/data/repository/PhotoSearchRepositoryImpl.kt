@@ -2,16 +2,30 @@ package com.evgenii.searchphoto.data.repository
 
 import com.evgenii.searchphoto.data.mapper.ApiMapper
 import com.evgenii.searchphoto.data.model.HitApiList
+import com.evgenii.searchphoto.data.service.Constants
 import com.evgenii.searchphoto.data.service.PhotosService
 import com.evgenii.searchphoto.domain.model.PhotoItem
 import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
-class PhotoSearchRepositoryImpl(private val photosService: PhotosService) : PhotoSearchRepository {
+class PhotoSearchRepositoryImpl : PhotoSearchRepository {
 
     private val mapper = ApiMapper()
+
+    private val photosService: PhotosService by lazy {
+        val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(Constants.API_PIXABAY_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+        retrofit.create(PhotosService::class.java)
+    }
 
     override fun getPhotos(
         query: String,
