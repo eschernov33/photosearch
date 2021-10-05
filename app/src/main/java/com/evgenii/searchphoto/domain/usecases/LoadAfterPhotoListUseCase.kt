@@ -19,7 +19,7 @@ class LoadAfterPhotoListUseCase(
             if (photoList.isEmpty()) {
                 callback.onResult(emptyList(), null)
             } else {
-                callback.onResult(photoList, page + 1)
+                callback.onResult(photoList, page + ONE_PAGE)
             }
 
         }
@@ -28,5 +28,9 @@ class LoadAfterPhotoListUseCase(
             callback.onResult(emptyList(), null)
         }
         photoSearchRepository.getPhotos(query, page, onResponse, onFailure)
+    }
+
+    companion object {
+        private const val ONE_PAGE = 1
     }
 }

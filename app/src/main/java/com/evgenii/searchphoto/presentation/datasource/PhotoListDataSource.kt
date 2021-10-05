@@ -27,9 +27,10 @@ class PhotoListDataSource(
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Photo>) {}
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Photo>) =
-        loadAfterPhotoListUseCase.execute(callback, query, params.key + 1, onLoadResult)
+        loadAfterPhotoListUseCase.execute(callback, query, params.key + ONE_PAGE, onLoadResult)
 
     companion object {
         private const val FIRST_PAGE = 1
+        private const val ONE_PAGE = 1
     }
 }

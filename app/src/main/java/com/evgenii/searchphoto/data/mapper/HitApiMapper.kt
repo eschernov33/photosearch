@@ -4,7 +4,7 @@ import com.evgenii.searchphoto.data.model.HitApi
 import com.evgenii.searchphoto.data.model.HitApiList
 import com.evgenii.searchphoto.domain.model.Photo
 
-class ApiMapper {
+class HitApiMapper {
 
     private fun mapHitApiToEntity(hitApi: HitApi): Photo =
         Photo(

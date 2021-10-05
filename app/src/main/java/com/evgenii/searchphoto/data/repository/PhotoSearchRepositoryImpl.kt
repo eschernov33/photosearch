@@ -1,6 +1,6 @@
 package com.evgenii.searchphoto.data.repository
 
-import com.evgenii.searchphoto.data.mapper.ApiMapper
+import com.evgenii.searchphoto.data.mapper.HitApiMapper
 import com.evgenii.searchphoto.data.model.HitApiList
 import com.evgenii.searchphoto.data.service.Constants
 import com.evgenii.searchphoto.data.service.PhotosService
@@ -16,7 +16,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 class PhotoSearchRepositoryImpl : PhotoSearchRepository {
 
-    private val mapper = ApiMapper()
+    private val mapper = HitApiMapper()
 
     private val photosService: PhotosService by lazy {
         val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
