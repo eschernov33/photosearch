@@ -22,6 +22,7 @@ class PhotosListPresenter(
 
     private var isVisibleList = false
     private var isLoading = false
+
     private var liveDataPhotos: LiveData<PagedList<PhotoItem>>? = null
 
     private val observerPhotoList: (photoItem: PagedList<PhotoItem>) -> Unit = { pagedList ->
