@@ -8,6 +8,8 @@ import androidx.paging.PagedList
 import com.evgenii.searchphoto.R
 import com.evgenii.searchphoto.domain.model.LoadResult
 import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
+import com.evgenii.searchphoto.domain.usecases.LoadAfterPhotoListUseCase
+import com.evgenii.searchphoto.domain.usecases.LoadInitialPhotoListUseCase
 import com.evgenii.searchphoto.presentation.contracts.PhotosListContract
 import com.evgenii.searchphoto.presentation.datasource.DataSourceFactory
 import com.evgenii.searchphoto.presentation.mapper.PhotoItemMapper
@@ -15,7 +17,7 @@ import com.evgenii.searchphoto.presentation.model.PhotoItem
 
 class PhotosListPresenter(
     private val view: PhotosListContract.View,
-    private val photoSearchRepository: PhotoSearchRepository
+    photoSearchRepository: PhotoSearchRepository
 ) : PhotosListContract.Presenter {
 
     private var isVisibleList = false
@@ -23,10 +25,15 @@ class PhotosListPresenter(
 
     private val mapper = PhotoItemMapper()
 
+    private val loadInitialPhotoListUseCase =
+        LoadInitialPhotoListUseCase(photoSearchRepository)
+    private val loadAfterPhotoListUseCase =
+        LoadAfterPhotoListUseCase(photoSearchRepository)
+
     override fun init(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
             isVisibleList = savedInstanceState.getBoolean(KEY_LIST_VISIBLE)
-            view.setListVisible(isVisibleList)
+            view.setListVisibility(isVisibleList)
             if (isLoading) {
                 view.showProgressBar()
             }
@@ -39,7 +46,7 @@ class PhotosListPresenter(
             view.setErrorMessage(R.string.input_query)
         } else {
             isVisibleList = true
-            view.setListVisible(isVisibleList)
+            view.setListVisibility(isVisibleList)
             searchPhotos(textSearch, lifecycleOwner)
         }
 
@@ -82,9 +89,12 @@ class PhotosListPresenter(
             view.hideProgressBar()
             isLoading = false
         }
-        return DataSourceFactory(photoSearchRepository, textSearch, onLoadResult).map { photo ->
-            mapper.mapPhotoToPhotoItem(photo)
-        }
+        return DataSourceFactory(
+            loadInitialPhotoListUseCase,
+            loadAfterPhotoListUseCase,
+            textSearch,
+            onLoadResult
+        ).map(mapper::mapPhotoToPhotoItem)
     }
 
     companion object {

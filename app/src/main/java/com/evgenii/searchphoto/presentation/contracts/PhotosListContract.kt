@@ -9,7 +9,7 @@ import com.evgenii.searchphoto.presentation.model.PhotoItem
 interface PhotosListContract {
 
     interface View {
-        fun setListVisible(isVisible: Boolean)
+        fun setListVisibility(isVisible: Boolean)
         fun showPhotoList(pagedList: PagedList<PhotoItem>)
         fun clearPhotosList()
         fun showToast(userName: String, photoId: Int)

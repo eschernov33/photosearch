@@ -91,7 +91,7 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
         binding.progressBarLoadPhotos.isVisible = false
     }
 
-    override fun setListVisible(isVisible: Boolean) {
+    override fun setListVisibility(isVisible: Boolean) {
         binding.rvPhotoList.isVisible = isVisible
     }
 

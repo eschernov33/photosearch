@@ -18,17 +18,17 @@ class PhotosListViewHolder(private val binding: ItemPhotoBinding) :
             tvPhotoTag.text = photo.tags
             tvPhotoDownloads.text = photo.downloads
             tvPhotoLikeCount.text = photo.likes
-            setImage(ivUserIcon, photo.userImageURL)
-            setImage(ivPhotoCard, photo.largeImageURL)
+            ivUserIcon.loadImage(photo.userImageURL)
+            ivPhotoCard.loadImage(photo.largeImageURL)
             root.setOnClickListener {
                 onItemClick(photo)
             }
         }
     }
 
-    private fun setImage(view: ImageView, url: String) {
+    private fun ImageView.loadImage(url: String) {
         if (url.isNotEmpty()) {
-            Picasso.get().load(url).into(view)
+            Picasso.get().load(url).into(this)
         }
     }
 }
