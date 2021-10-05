@@ -1,5 +1,5 @@
 # PhotoSearch 
-### (MVP - Clean Architecture/Single Activity - Retrofit - Moshi - Paging 2)
+### (MVVM - Clean Architecture/Single Activity - Retrofit - Moshi - Paging 3)
 
 > Тестовое приложение на основе архитектуры CA и MVP паттерна, с использованием retrofit и moshi для загрузки данных из API.
 > Данные загружаются постранично с помощью Paging Library. 
