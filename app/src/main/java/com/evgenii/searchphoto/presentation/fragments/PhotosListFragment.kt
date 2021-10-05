@@ -58,10 +58,7 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
     private fun setEditTextListener() {
         binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                presenter.onSearchApply(
-                    binding.etSearch.text.toString(),
-                    viewLifecycleOwner
-                )
+                presenter.onSearchApply(binding.etSearch.text.toString())
                 true
             } else
                 false
@@ -80,6 +77,7 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
 
     override fun onDestroy() {
         super.onDestroy()
+        presenter.onDestroyFragment()
         _binding = null
     }
 

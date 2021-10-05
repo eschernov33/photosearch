@@ -1,7 +1,7 @@
 package com.evgenii.searchphoto.presentation.presenters
 
 import android.os.Bundle
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -22,17 +22,25 @@ class PhotosListPresenter(
 
     private var isVisibleList = false
     private var isLoading = false
+    private var liveDataPhotos: LiveData<PagedList<PhotoItem>>? = null
+
+    private val observerPhotoList: (photoItem: PagedList<PhotoItem>) -> Unit = { pagedList ->
+        view.showPhotoList(pagedList)
+        view.hideSoftKeyboard()
+    }
 
     private val mapper = PhotoItemMapper()
 
     private val loadInitialPhotoListUseCase =
         LoadInitialPhotoListUseCase(photoSearchRepository)
+
     private val loadAfterPhotoListUseCase =
         LoadAfterPhotoListUseCase(photoSearchRepository)
 
     override fun init(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
             isVisibleList = savedInstanceState.getBoolean(KEY_LIST_VISIBLE)
+            isLoading = savedInstanceState.getBoolean(KEY_IS_LOADING)
             view.setListVisibility(isVisibleList)
             if (isLoading) {
                 view.showProgressBar()
@@ -40,15 +48,23 @@ class PhotosListPresenter(
         }
     }
 
-    override fun onSearchApply(textSearch: String, lifecycleOwner: LifecycleOwner) =
+    override fun onSearchApply(textSearch: String) =
         if (textSearch.isEmpty()) {
             view.clearPhotosList()
             view.setErrorMessage(R.string.input_query)
         } else {
             isVisibleList = true
             view.setListVisibility(isVisibleList)
-            searchPhotos(textSearch, lifecycleOwner)
+            searchPhotos(textSearch)
         }
+
+    private fun searchPhotos(textSearch: String) {
+        showProgressBar()
+        val pagedListConfig = getPagedListConfig()
+        val dataSourceFactory = getDataSourceFactory(textSearch)
+        liveDataPhotos = LivePagedListBuilder(dataSourceFactory, pagedListConfig).build()
+        liveDataPhotos?.observeForever(observerPhotoList)
+    }
 
     override fun onItemClick(photo: PhotoItem) =
         view.showToast(photo.user, photo.id)
@@ -58,15 +74,8 @@ class PhotosListPresenter(
         outState.putBoolean(KEY_IS_LOADING, isLoading)
     }
 
-    private fun searchPhotos(textSearch: String, lifecycleOwner: LifecycleOwner) {
-        showProgressBar()
-        val pagedListConfig = getPagedListConfig()
-        val dataSourceFactory = getDataSourceFactory(textSearch)
-        val liveDataPhotos = LivePagedListBuilder(dataSourceFactory, pagedListConfig).build()
-        liveDataPhotos.observe(lifecycleOwner) { pagedList ->
-            view.showPhotoList(pagedList)
-            view.hideSoftKeyboard()
-        }
+    override fun onDestroyFragment() {
+        liveDataPhotos?.removeObserver(observerPhotoList)
     }
 
     private fun showProgressBar() {
