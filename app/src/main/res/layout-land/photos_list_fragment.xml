@@ -68,4 +68,16 @@
         app:spanCount="2"
         tools:listitem="@layout/item_photo" />
 
+    <TextView
+        android:id="@+id/tvSearchInfo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilSearch"
+        android:gravity="top|center_horizontal"
+        tools:text="error"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

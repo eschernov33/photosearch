@@ -1,15 +1,18 @@
 package com.evgenii.searchphoto.data.mapper
 
+import android.util.Log
 import com.evgenii.searchphoto.data.model.HitApiItem
 import com.evgenii.searchphoto.data.model.HitApiItemList
 import com.evgenii.searchphoto.domain.model.Photo
 
 class HitApiMapper {
 
-    fun mapHitApiItemListToEntities(hitApiItems: HitApiItemList): List<Photo> =
-        hitApiItems.hits.map(this::mapHitApiItemToEntity)
+    fun mapHitApiItemListToEntities(hitApiItems: HitApiItemList): List<Photo> {
+        Log.i("my", "size = " + hitApiItems.hits.size)
+        return hitApiItems.hits.map(this::mapHitApiItemToEntity)
+    }
 
-    private fun mapHitApiItemToEntity(hitApiItem: HitApiItem): Photo =
+    fun mapHitApiItemToEntity(hitApiItem: HitApiItem): Photo =
         Photo(
             hitApiItem.id,
             hitApiItem.user,

@@ -10,21 +10,32 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.paging.PagedList
+import androidx.fragment.app.viewModels
 import com.evgenii.searchphoto.App
 import com.evgenii.searchphoto.R
+import com.evgenii.searchphoto.data.repository.PhotoSearchRepositoryImpl
 import com.evgenii.searchphoto.databinding.PhotosListFragmentBinding
+import com.evgenii.searchphoto.domain.usecases.LoadPhotoListUseCase
 import com.evgenii.searchphoto.presentation.adapters.PhotosAdapter
-import com.evgenii.searchphoto.presentation.contracts.PhotosListContract
-import com.evgenii.searchphoto.presentation.model.PhotoItem
-import com.evgenii.searchphoto.presentation.presenters.PhotosListPresenter
+import com.evgenii.searchphoto.presentation.adapters.PhotosAdapterLoadState
+import com.evgenii.searchphoto.presentation.mapper.PhotoItemMapper
+import com.evgenii.searchphoto.presentation.viewmodel.PhotoListViewModel
+import com.evgenii.searchphoto.presentation.viewmodel.PhotoListViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
-class PhotosListFragment : Fragment(), PhotosListContract.View {
+@AndroidEntryPoint
+class PhotosListFragment : Fragment() {
 
-    private lateinit var presenter: PhotosListContract.Presenter
+    private val viewModel: PhotoListViewModel by viewModels() {
+        val app = requireContext().applicationContext as App
+        val repository = PhotoSearchRepositoryImpl()
+        val loadPhotoListUseCase = LoadPhotoListUseCase(repository)
+        val mapper = PhotoItemMapper()
+        PhotoListViewModelFactory(app.photosApi, loadPhotoListUseCase, mapper)
+    }
 
     private val adapter = PhotosAdapter { photoItem ->
-        presenter.onItemClick(photoItem)
+        viewModel.onItemClick(photoItem)
     }
 
     private var _binding: PhotosListFragmentBinding? = null
@@ -42,75 +53,61 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initObservers()
         initPhotoListAdapter()
         setEditTextListener()
-        initPresenter()
-        //TODO Ignored warning about deprecated function due to the prohibition to use the
-        // recommended viewmodel in the current project
-        retainInstance = true
-        presenter.init(savedInstanceState)
+    }
+
+    private fun initObservers() {
+        with(viewModel) {
+            showProgressBar.observe(viewLifecycleOwner) { isVisible ->
+                binding.progressBarLoadPhotos.isVisible = isVisible
+            }
+            photoListVisibility.observe(viewLifecycleOwner) { isVisible ->
+                binding.rvPhotoList.isVisible = isVisible
+            }
+
+            textSearchResultError.observe(viewLifecycleOwner) { text ->
+                binding.tvSearchInfo.text = text
+            }
+            textSearchResultErrorVisible.observe(viewLifecycleOwner) { isVisible ->
+                binding.tvSearchInfo.isVisible = isVisible
+            }
+            shouldHideSoftKeyboard.observe(viewLifecycleOwner) {
+                hideSoftKeyboard()
+            }
+            shouldShowToast.observe(viewLifecycleOwner, this@PhotosListFragment::showToast)
+        }
     }
 
     private fun initPhotoListAdapter() {
-        binding.rvPhotoList.adapter = adapter
+        binding.rvPhotoList.adapter = adapter.withLoadStateFooter(PhotosAdapterLoadState())
+        adapter.addLoadStateListener { loadState ->
+            viewModel.onLoadStateListener(loadState, adapter.itemCount)
+        }
     }
 
     private fun setEditTextListener() {
         binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                presenter.onSearchApply(binding.etSearch.text.toString())
+                viewModel.searchPhotos(binding.etSearch.text.toString())
+                viewModel.photoList.observe(viewLifecycleOwner) { pagingData ->
+                    adapter.submitData(lifecycle, pagingData)
+                }
                 true
             } else
                 false
         }
     }
 
-    private fun initPresenter() {
-        val app = requireContext().applicationContext as App
-        presenter = PhotosListPresenter(this, app.photoSearchRepository)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        presenter.onRestartLayout(outState)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        presenter.onDestroyFragment()
-        _binding = null
-    }
-
-    override fun showProgressBar() {
-        binding.progressBarLoadPhotos.isVisible = true
-    }
-
-    override fun hideProgressBar() {
-        binding.progressBarLoadPhotos.isVisible = false
-    }
-
-    override fun setListVisibility(isVisible: Boolean) {
-        binding.rvPhotoList.isVisible = isVisible
-    }
-
-    override fun showPhotoList(pagedList: PagedList<PhotoItem>) =
-        adapter.submitList(pagedList)
-
-    override fun showToast(userName: String, photoId: Int) =
+    private fun showToast(userName: String) =
         Toast.makeText(
             requireContext(),
-            getString(R.string.toast_message, userName, photoId),
+            getString(R.string.toast_message, userName),
             Toast.LENGTH_SHORT
         ).show()
 
-    override fun clearPhotosList() =
-        adapter.submitList(null)
-
-    override fun setErrorMessage(message: Int) {
-        binding.etSearch.error = resources.getString(message)
-    }
-
-    override fun hideSoftKeyboard() {
+    private fun hideSoftKeyboard() {
         val inputMethodManager: InputMethodManager = requireContext().getSystemService(
             Context.INPUT_METHOD_SERVICE
         ) as InputMethodManager
@@ -120,5 +117,10 @@ class PhotosListFragment : Fragment(), PhotosListContract.View {
                 0
             )
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

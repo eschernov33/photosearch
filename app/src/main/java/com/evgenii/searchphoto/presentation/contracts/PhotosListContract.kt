@@ -2,14 +2,14 @@ package com.evgenii.searchphoto.presentation.contracts
 
 import android.os.Bundle
 import androidx.annotation.StringRes
-import androidx.paging.PagedList
+import androidx.paging.PagingData
 import com.evgenii.searchphoto.presentation.model.PhotoItem
 
 interface PhotosListContract {
 
     interface View {
         fun setListVisibility(isVisible: Boolean)
-        fun showPhotoList(pagedList: PagedList<PhotoItem>)
+        fun showPhotoList(pagingData: PagingData<PhotoItem>)
         fun clearPhotosList()
         fun showToast(userName: String, photoId: Int)
         fun setErrorMessage(@StringRes message: Int)

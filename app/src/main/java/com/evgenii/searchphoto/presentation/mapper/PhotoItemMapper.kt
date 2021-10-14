@@ -2,8 +2,9 @@ package com.evgenii.searchphoto.presentation.mapper
 
 import com.evgenii.searchphoto.domain.model.Photo
 import com.evgenii.searchphoto.presentation.model.PhotoItem
+import javax.inject.Inject
 
-class PhotoItemMapper {
+class PhotoItemMapper @Inject constructor() {
 
     fun mapPhotoToPhotoItem(photo: Photo): PhotoItem =
         PhotoItem(

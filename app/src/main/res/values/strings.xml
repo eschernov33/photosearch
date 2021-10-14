@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PhotosList</string>
     <string name="input_query">Input text</string>
-    <string name="toast_message">"User: %s. ID: %d"</string>
+    <string name="toast_message">"User: %s"</string>
     <string name="content_description_photo">Photo</string>
     <string name="content_description_icon_download">Download icon</string>
     <string name="content_description_icon_likes">Like icon</string>
