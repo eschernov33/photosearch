@@ -9,9 +9,7 @@ import com.evgenii.searchphoto.presentation.adapters.viewholders.PhotosListLoade
 
 class PhotosAdapterLoadState: LoadStateAdapter<PhotosListLoaderStateViewHolder>() {
 
-    override fun onBindViewHolder(holder: PhotosListLoaderStateViewHolder, loadState: LoadState) {
-        holder.bind(loadState)
-    }
+    override fun onBindViewHolder(holder: PhotosListLoaderStateViewHolder, loadState: LoadState) = Unit
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): PhotosListLoaderStateViewHolder {
         return PhotosListLoaderStateViewHolder(ItemProgressBinding.inflate(LayoutInflater.from(parent.context), parent, false))

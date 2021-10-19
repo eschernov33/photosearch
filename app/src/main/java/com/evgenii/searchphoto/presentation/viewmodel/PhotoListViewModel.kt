@@ -4,86 +4,64 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
-import androidx.paging.CombinedLoadStates
-import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.map
-import com.evgenii.searchphoto.data.api.PhotosApi
-import com.evgenii.searchphoto.data.source.PhotoListRxPageSource
-import com.evgenii.searchphoto.domain.usecases.LoadPhotoListUseCase
+import androidx.paging.*
+import com.evgenii.searchphoto.domain.usecases.GetPhotoListUseCase
 import com.evgenii.searchphoto.presentation.mapper.PhotoItemMapper
-import com.evgenii.searchphoto.presentation.model.PhotoItem
+import com.evgenii.searchphoto.presentation.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class PhotoListViewModel @Inject constructor(
-    private val photosApi: PhotosApi,
-    private val loadPhotoListUseCase: LoadPhotoListUseCase,
+    private val getPhotoListUseCase: GetPhotoListUseCase,
     private val mapper: PhotoItemMapper
 ) : ViewModel() {
 
-    private var _photoList: LiveData<PagingData<PhotoItem>> = MutableLiveData()
+    private var _photoList = MutableLiveData<PagingData<PhotoItem>>()
     val photoList: LiveData<PagingData<PhotoItem>>
         get() = _photoList
 
-    private val _photoListVisibility = MutableLiveData<Boolean>()
-    val photoListVisibility: LiveData<Boolean> = _photoListVisibility
+    private val _photosLoadState = MutableLiveData<PhotosLoadState>()
+    val photosLoadState: LiveData<PhotosLoadState> = _photosLoadState
 
-    private val _textSearchResultError: MutableLiveData<String> = MutableLiveData()
-    val textSearchResultError: LiveData<String> = _textSearchResultError
-
-    private val _textSearchResultErrorVisible: MutableLiveData<Boolean> = MutableLiveData()
-    val textSearchResultErrorVisible: LiveData<Boolean> = _textSearchResultErrorVisible
-
-    private val _showProgressBar: MutableLiveData<Boolean> = MutableLiveData()
-    val showProgressBar: LiveData<Boolean> = _showProgressBar
-
-    private val _shouldHideSoftKeyboard = MutableLiveData<Unit>()
-    val shouldHideSoftKeyboard: LiveData<Unit> = _shouldHideSoftKeyboard
-
-    private val _shouldShowToast = MutableLiveData<String>()
-    val shouldShowToast: LiveData<String> = _shouldShowToast
+    private val _actionShowDetails: MutableLiveData<Event<PhotoItem>> = MutableLiveData()
+    val actionShowDetails: LiveData<Event<PhotoItem>> = _actionShowDetails
 
     init {
-        _showProgressBar.value = false
-        _photoListVisibility.value = false
-        _textSearchResultErrorVisible.value = false
+        _photosLoadState.value = OnInitState
     }
 
     fun searchPhotos(query: String) {
-        _showProgressBar.value = true
-        _photoList = loadPhotoListUseCase.execute(
-            photosApi,
-            query,
-            1,
-            PhotoListRxPageSource(photosApi, query)
-        )
+        _photosLoadState.value = StartLoadingState
+        _photoList = getPhotoListUseCase(query)
             .map { pagingData ->
                 pagingData.map { mapper.mapPhotoToPhotoItem(it) }
-            }
-        _showProgressBar.value = false
+            }.cachedIn(this) as MutableLiveData<PagingData<PhotoItem>>
     }
 
     fun onLoadStateListener(loadState: CombinedLoadStates, itemCount: Int) {
         val refreshState = loadState.refresh
         if (refreshState is LoadState.Error) {
-            _textSearchResultError.value = "Проверьте ваше интернет соединение. Ошибка: " +
-                    (refreshState.error.localizedMessage ?: "неизвестная ошибка")
-            _textSearchResultErrorVisible.value = true
-            _photoListVisibility.value = false
-        } else if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && itemCount < 1) {
-            _textSearchResultError.value = "Фото не найдены"
-            _textSearchResultErrorVisible.value = true
-            _photoListVisibility.value = false
-        } else if (itemCount > 0) {
-            _shouldHideSoftKeyboard.value = Unit
-            _textSearchResultErrorVisible.value = false
-            _photoListVisibility.value = true
+            _photosLoadState.value = EndLoadingState
+            _photosLoadState.value = ErrorLoadState(
+                (refreshState.error.localizedMessage)
+            )
+        } else if (loadState.refresh !is LoadState.Loading) {
+            if (loadState.source.refresh is LoadState.NotLoading &&
+                loadState.append.endOfPaginationReached && itemCount < 1
+            ) {
+                _photosLoadState.value = EndLoadingState
+                _photosLoadState.value = EmptyLoadState
+            } else if (itemCount > 0) {
+                _photoList.value?.let { pagingData ->
+                    _photosLoadState.value = EndLoadingState
+                    _photosLoadState.value = SuccessLoadState(pagingData)
+                }
+            }
         }
     }
 
-    fun onItemClick(photoItem: PhotoItem) {
-        _shouldShowToast.value = photoItem.user
+    fun onPhotoDetails(photoItem: PhotoItem) {
+        _actionShowDetails.value = Event(photoItem)
     }
 }

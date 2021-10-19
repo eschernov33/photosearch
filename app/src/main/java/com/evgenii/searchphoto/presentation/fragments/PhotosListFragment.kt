@@ -7,40 +7,40 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
+import android.view.inputmethod.InputMethodManager.RESULT_UNCHANGED_SHOWN
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.evgenii.searchphoto.App
+import androidx.navigation.NavController
+import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.findNavController
 import com.evgenii.searchphoto.R
-import com.evgenii.searchphoto.data.repository.PhotoSearchRepositoryImpl
 import com.evgenii.searchphoto.databinding.PhotosListFragmentBinding
-import com.evgenii.searchphoto.domain.usecases.LoadPhotoListUseCase
 import com.evgenii.searchphoto.presentation.adapters.PhotosAdapter
 import com.evgenii.searchphoto.presentation.adapters.PhotosAdapterLoadState
-import com.evgenii.searchphoto.presentation.mapper.PhotoItemMapper
+import com.evgenii.searchphoto.presentation.model.*
 import com.evgenii.searchphoto.presentation.viewmodel.PhotoListViewModel
-import com.evgenii.searchphoto.presentation.viewmodel.PhotoListViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PhotosListFragment : Fragment() {
 
-    private val viewModel: PhotoListViewModel by viewModels() {
-        val app = requireContext().applicationContext as App
-        val repository = PhotoSearchRepositoryImpl()
-        val loadPhotoListUseCase = LoadPhotoListUseCase(repository)
-        val mapper = PhotoItemMapper()
-        PhotoListViewModelFactory(app.photosApi, loadPhotoListUseCase, mapper)
-    }
-
-    private val adapter = PhotosAdapter { photoItem ->
-        viewModel.onItemClick(photoItem)
-    }
+    private val viewModel: PhotoListViewModel by viewModels()
+    private val navController: NavController by lazy { findNavController() }
+    private var transitionExtras: FragmentNavigator.Extras? = null
 
     private var _binding: PhotosListFragmentBinding? = null
     private val binding: PhotosListFragmentBinding
         get() = _binding ?: throw RuntimeException("PhotosListFragmentBinding is null")
+
+    private val preDrawListener = {
+        startPostponedEnterTransition()
+        true
+    }
+
+    private val adapter = PhotosAdapter { photoItem, extras ->
+        onItemClick(extras, photoItem)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,35 +53,62 @@ class PhotosListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setAnimSharedTransition()
         initObservers()
         initPhotoListAdapter()
         setEditTextListener()
     }
 
+    private fun setAnimSharedTransition() {
+        postponeEnterTransition()
+        binding.areaPhotoList.rvPhotoList.viewTreeObserver.addOnPreDrawListener(preDrawListener)
+    }
+
     private fun initObservers() {
         with(viewModel) {
-            showProgressBar.observe(viewLifecycleOwner) { isVisible ->
-                binding.progressBarLoadPhotos.isVisible = isVisible
+            photosLoadState.observe(viewLifecycleOwner) { photosLoadState ->
+                when (photosLoadState) {
+                    is OnInitState -> {
+                        binding.areaPhotoList.root.isVisible = false
+                        binding.areaPhotoList.progressBarLoadPhotos.isVisible = false
+                        binding.areaPhotoList.rvPhotoList.isVisible = false
+                        binding.areaPhotoList.tvSearchErrorMessage.isVisible = false
+                    }
+                    is StartLoadingState -> {
+                        binding.areaPhotoList.root.isVisible = true
+                        binding.areaPhotoList.progressBarLoadPhotos.isVisible = true
+                        hideSoftKeyboard()
+                    }
+                    is EndLoadingState -> {
+                        binding.areaPhotoList.progressBarLoadPhotos.isVisible = false
+                    }
+                    is ErrorLoadState -> {
+                        binding.areaPhotoList.tvSearchErrorMessage.text =
+                            getString(R.string.error_load_description, photosLoadState.errorMessage)
+                        binding.areaPhotoList.tvSearchErrorMessage.isVisible = true
+                        binding.areaPhotoList.rvPhotoList.isVisible = false
+                    }
+                    is SuccessLoadState -> {
+                        binding.areaPhotoList.rvPhotoList.isVisible = true
+                        binding.areaPhotoList.tvSearchErrorMessage.isVisible = false
+                        adapter.submitData(lifecycle, photosLoadState.pagingData)
+                    }
+                    is EmptyLoadState -> {
+                        binding.areaPhotoList.tvSearchErrorMessage.text =
+                            getString(R.string.error_photos_not_found)
+                        binding.areaPhotoList.tvSearchErrorMessage.isVisible = true
+                        binding.areaPhotoList.rvPhotoList.isVisible = false
+                    }
+                }
             }
-            photoListVisibility.observe(viewLifecycleOwner) { isVisible ->
-                binding.rvPhotoList.isVisible = isVisible
+            actionShowDetails.observe(viewLifecycleOwner) {
+                it.getValue()?.let(this@PhotosListFragment::navigateToDetailScreen)
             }
-
-            textSearchResultError.observe(viewLifecycleOwner) { text ->
-                binding.tvSearchInfo.text = text
-            }
-            textSearchResultErrorVisible.observe(viewLifecycleOwner) { isVisible ->
-                binding.tvSearchInfo.isVisible = isVisible
-            }
-            shouldHideSoftKeyboard.observe(viewLifecycleOwner) {
-                hideSoftKeyboard()
-            }
-            shouldShowToast.observe(viewLifecycleOwner, this@PhotosListFragment::showToast)
         }
     }
 
     private fun initPhotoListAdapter() {
-        binding.rvPhotoList.adapter = adapter.withLoadStateFooter(PhotosAdapterLoadState())
+        binding.areaPhotoList.rvPhotoList.adapter = adapter.withLoadStateFooter(PhotosAdapterLoadState())
         adapter.addLoadStateListener { loadState ->
             viewModel.onLoadStateListener(loadState, adapter.itemCount)
         }
@@ -100,12 +127,23 @@ class PhotosListFragment : Fragment() {
         }
     }
 
-    private fun showToast(userName: String) =
-        Toast.makeText(
-            requireContext(),
-            getString(R.string.toast_message, userName),
-            Toast.LENGTH_SHORT
-        ).show()
+    private fun onItemClick(
+        extras: FragmentNavigator.Extras,
+        photoItem: PhotoItem
+    ) {
+        transitionExtras = extras
+        viewModel.onPhotoDetails(photoItem)
+    }
+
+    private fun navigateToDetailScreen(photoItem: PhotoItem) {
+        transitionExtras?.let { extras ->
+            navController.navigate(
+                PhotosListFragmentDirections.actionPhotosListFragmentToPhotoDetailFragment(
+                    photoItem.id, photoItem.largeImageURL
+                ), extras
+            )
+        }
+    }
 
     private fun hideSoftKeyboard() {
         val inputMethodManager: InputMethodManager = requireContext().getSystemService(
@@ -114,13 +152,14 @@ class PhotosListFragment : Fragment() {
         if (inputMethodManager.isAcceptingText) {
             inputMethodManager.hideSoftInputFromWindow(
                 requireView().windowToken,
-                0
+                RESULT_UNCHANGED_SHOWN
             )
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        binding.areaPhotoList.rvPhotoList.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
         _binding = null
     }
 }

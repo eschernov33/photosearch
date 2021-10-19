@@ -8,4 +8,7 @@ class HitApiItem(
     val tags: String,
     val user: String,
     val userImageURL: String,
+    val comments: Int,
+    val views: Int,
+    val pageURL: String
 )

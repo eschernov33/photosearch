@@ -11,6 +11,18 @@ interface PhotosApi {
     fun getPhotos(
         @Query("q") query: String,
         @Query("page") page: Int,
-        @Query("key") key: String = Constants.API_KEY
+        @Query("key") key: String = API_KEY
     ): Single<HitApiItemList>
+
+    @GET("?image_type=photo")
+    fun getPhotoById(
+        @Query("id") query: Int,
+        @Query("key") key: String = API_KEY
+    ): Single<HitApiItemList>
+
+    companion object {
+        private const val API_KEY = "23542045-e66ff76ab11368fd9f4fd2afe"
+    }
+
+
 }

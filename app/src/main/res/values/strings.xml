@@ -8,4 +8,6 @@
     <string name="hint_photo_search">Search pictures</string>
     <string name="error_empty_result">Nothing found</string>
     <string name="content_description_logo">Logotype</string>
+    <string name="error_load_description">Произошла ошибка при загрузке: %1$s</string>
+    <string name="error_photos_not_found">Фото не найдены</string>
 </resources>

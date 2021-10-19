@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/photosListFragment">
+
+    <fragment
+        android:id="@+id/photosListFragment"
+        android:name="com.evgenii.searchphoto.presentation.fragments.PhotosListFragment"
+        android:label="PhotosListFragment" >
+
+        <action
+            android:id="@+id/action_photosListFragment_to_photoDetailFragment"
+            app:destination="@id/photoDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoDetailFragment"
+        android:name="com.evgenii.searchphoto.presentation.fragments.PhotoDetailFragment"
+        android:label="PhotoDetailFragment" >
+        <argument
+            android:name="photoId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_photoDetailFragment_to_photosListFragment"
+            app:popUpTo="@id/photosListFragment"
+            app:destination="@id/photosListFragment" />
+        <argument
+            android:name="largeImageUrl"
+            app:argType="string" />
+    </fragment>
+</navigation>
