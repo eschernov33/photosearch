@@ -42,52 +42,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <include
-        android:layout_width="0dp"
-        android:layout_height="0dp"
         android:id="@+id/areaPhotoList"
         layout="@layout/area_photo_list"
-        app:layout_constraintTop_toBottomOf="@id/tilSearch"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"/>
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/rvPhotoList"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_marginTop="2dp"-->
-<!--        android:clipToPadding="false"-->
-<!--        android:padding="8dp"-->
-<!--        android:visibility="gone"-->
-<!--        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/tilSearch"-->
-<!--        app:spanCount="@integer/rv_span_count"-->
-<!--        tools:listitem="@layout/item_photo" />-->
-
-<!--    <ProgressBar-->
-<!--        android:id="@+id/progressBarLoadPhotos"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:visibility="gone"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/tilSearch" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/tv_search_error_message"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_margin="20dp"-->
-<!--        android:gravity="top|center_horizontal"-->
-<!--        android:textColor="@android:color/holo_red_dark"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/tilSearch"-->
-<!--        tools:text="error" />-->
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tilSearch" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

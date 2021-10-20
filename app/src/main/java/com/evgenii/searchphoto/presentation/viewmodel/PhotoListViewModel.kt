@@ -7,7 +7,10 @@ import androidx.lifecycle.map
 import androidx.paging.*
 import com.evgenii.searchphoto.domain.usecases.GetPhotoListUseCase
 import com.evgenii.searchphoto.presentation.mapper.PhotoItemMapper
-import com.evgenii.searchphoto.presentation.model.*
+import com.evgenii.searchphoto.presentation.model.ErrorMessage
+import com.evgenii.searchphoto.presentation.model.Event
+import com.evgenii.searchphoto.presentation.model.PhotoItem
+import com.evgenii.searchphoto.presentation.model.PhotoListAreaViewsVisibility
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -21,18 +24,29 @@ class PhotoListViewModel @Inject constructor(
     val photoList: LiveData<PagingData<PhotoItem>>
         get() = _photoList
 
-    private val _photosLoadState = MutableLiveData<PhotosLoadState>()
-    val photosLoadState: LiveData<PhotosLoadState> = _photosLoadState
+    private var _photoListAreaViewVisibility = MutableLiveData<PhotoListAreaViewsVisibility>()
+    val photoListAreaViewsVisibility: LiveData<PhotoListAreaViewsVisibility> =
+        _photoListAreaViewVisibility
+
+    private var _errorMessage = MutableLiveData<ErrorMessage>()
+    val errorMessage: LiveData<ErrorMessage> = _errorMessage
 
     private val _actionShowDetails: MutableLiveData<Event<PhotoItem>> = MutableLiveData()
     val actionShowDetails: LiveData<Event<PhotoItem>> = _actionShowDetails
 
+    private val _actionHideKeyboard: MutableLiveData<Event<Unit>> = MutableLiveData()
+    val actionHideKeyboard: LiveData<Event<Unit>> = _actionHideKeyboard
+
     init {
-        _photosLoadState.value = OnInitState
+        updatePhotoListAreaViewVisibility()
     }
 
     fun searchPhotos(query: String) {
-        _photosLoadState.value = StartLoadingState
+        updatePhotoListAreaViewVisibility(
+            listVisible = true,
+            progressPhotoLoadVisible = true,
+        )
+        _actionHideKeyboard.value = Event(Unit)
         _photoList = getPhotoListUseCase(query)
             .map { pagingData ->
                 pagingData.map { mapper.mapPhotoToPhotoItem(it) }
@@ -42,26 +56,34 @@ class PhotoListViewModel @Inject constructor(
     fun onLoadStateListener(loadState: CombinedLoadStates, itemCount: Int) {
         val refreshState = loadState.refresh
         if (refreshState is LoadState.Error) {
-            _photosLoadState.value = EndLoadingState
-            _photosLoadState.value = ErrorLoadState(
-                (refreshState.error.localizedMessage)
-            )
+            updatePhotoListAreaViewVisibility(errorMessageVisible = true)
+            _errorMessage.value =
+                ErrorMessage(ErrorMessage.Type.NETWORK, refreshState.error.localizedMessage)
         } else if (loadState.refresh !is LoadState.Loading) {
             if (loadState.source.refresh is LoadState.NotLoading &&
                 loadState.append.endOfPaginationReached && itemCount < 1
             ) {
-                _photosLoadState.value = EndLoadingState
-                _photosLoadState.value = EmptyLoadState
+                updatePhotoListAreaViewVisibility(errorMessageVisible = true)
+                _errorMessage.value = ErrorMessage(ErrorMessage.Type.NOT_FOUND)
             } else if (itemCount > 0) {
-                _photoList.value?.let { pagingData ->
-                    _photosLoadState.value = EndLoadingState
-                    _photosLoadState.value = SuccessLoadState(pagingData)
-                }
+                updatePhotoListAreaViewVisibility(listVisible = true)
             }
         }
     }
 
     fun onPhotoDetails(photoItem: PhotoItem) {
         _actionShowDetails.value = Event(photoItem)
+    }
+
+    private fun updatePhotoListAreaViewVisibility(
+        listVisible: Boolean = false,
+        progressPhotoLoadVisible: Boolean = false,
+        errorMessageVisible: Boolean = false
+    ) {
+        _photoListAreaViewVisibility.value = PhotoListAreaViewsVisibility(
+            listVisible = listVisible,
+            progressPhotoLoadVisible = progressPhotoLoadVisible,
+            errorMessageVisible = errorMessageVisible
+        )
     }
 }

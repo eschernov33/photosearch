@@ -1,6 +1,6 @@
 package com.evgenii.searchphoto.data.model
 
-class HitApiItem(
+class HitApi(
     val downloads: Int,
     val id: Int,
     val largeImageURL: String,

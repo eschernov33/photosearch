@@ -1,43 +1,41 @@
 package com.evgenii.searchphoto.data.mapper
 
-import com.evgenii.searchphoto.data.model.HitApiItem
-import com.evgenii.searchphoto.data.model.HitApiItemList
+import com.evgenii.searchphoto.data.model.HitApi
+import com.evgenii.searchphoto.data.model.HitApiResponse
 import com.evgenii.searchphoto.domain.model.Photo
 import com.evgenii.searchphoto.domain.model.PhotoDetail
 import javax.inject.Inject
 
 class HitApiMapper @Inject constructor() {
 
-    fun mapHitApiItemListToEntities(hitApiItems: HitApiItemList): List<Photo> {
-        return hitApiItems.hits.map(this::mapHitApiItemToEntity)
-    }
+    fun mapHitApiResponseToListPhoto(hitApiResponse: HitApiResponse): List<Photo> =
+        hitApiResponse.hits.map(this::mapHitApiToPhoto)
 
-    fun mapHitApiItemListToPhotoDetail(hitApiItems: HitApiItemList): List<PhotoDetail> {
-        return hitApiItems.hits.map(this::mapHitApiItemToPhotoDetail)
-    }
+    fun mapHitApiResponseToListPhotoDetail(hitApiResponse: HitApiResponse): List<PhotoDetail> =
+        hitApiResponse.hits.map(this::mapHitApiToPhotoDetail)
 
-    private fun mapHitApiItemToPhotoDetail(hitApiItem: HitApiItem) : PhotoDetail =
+    private fun mapHitApiToPhotoDetail(hitApi: HitApi): PhotoDetail =
         PhotoDetail(
-            hitApiItem.id,
-            hitApiItem.user,
-            hitApiItem.userImageURL,
-            hitApiItem.likes,
-            hitApiItem.downloads,
-            hitApiItem.largeImageURL,
-            hitApiItem.tags,
-            hitApiItem.comments,
-            hitApiItem.views,
-            hitApiItem.pageURL
+            hitApi.id,
+            hitApi.user,
+            hitApi.userImageURL,
+            hitApi.likes,
+            hitApi.downloads,
+            hitApi.largeImageURL,
+            hitApi.tags,
+            hitApi.comments,
+            hitApi.views,
+            hitApi.pageURL
         )
 
-    private fun mapHitApiItemToEntity(hitApiItem: HitApiItem): Photo =
+    private fun mapHitApiToPhoto(hitApi: HitApi): Photo =
         Photo(
-            hitApiItem.id,
-            hitApiItem.user,
-            hitApiItem.userImageURL,
-            hitApiItem.likes,
-            hitApiItem.downloads,
-            hitApiItem.largeImageURL,
-            hitApiItem.tags
+            hitApi.id,
+            hitApi.user,
+            hitApi.userImageURL,
+            hitApi.likes,
+            hitApi.downloads,
+            hitApi.largeImageURL,
+            hitApi.tags
         )
 }

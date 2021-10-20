@@ -17,8 +17,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivUserIcon"
-            android:layout_width="@dimen/icon_size_42"
-            android:layout_height="@dimen/icon_size_42"
+            android:layout_width="@dimen/icon_large"
+            android:layout_height="@dimen/icon_large"
             android:layout_margin="8dp"
             android:scaleType="fitXY"
             app:layout_constraintStart_toStartOf="parent"
@@ -61,8 +61,8 @@
 
         <ImageView
             android:id="@+id/ivIconDownload"
-            android:layout_width="@dimen/icon_size_20"
-            android:layout_height="@dimen/icon_size_20"
+            android:layout_width="@dimen/icon_small"
+            android:layout_height="@dimen/icon_small"
             android:layout_marginVertical="10dp"
             android:layout_marginStart="16dp"
             android:contentDescription="@string/content_description_icon_download"
@@ -88,8 +88,8 @@
 
         <ImageView
             android:id="@+id/ivIconPhotoLike"
-            android:layout_width="@dimen/icon_size_20"
-            android:layout_height="@dimen/icon_size_20"
+            android:layout_width="@dimen/icon_small"
+            android:layout_height="@dimen/icon_small"
             android:contentDescription="@string/content_description_icon_likes"
             android:src="@drawable/ic_like"
             app:layout_constraintBottom_toBottomOf="@id/tvPhotoDownloads"

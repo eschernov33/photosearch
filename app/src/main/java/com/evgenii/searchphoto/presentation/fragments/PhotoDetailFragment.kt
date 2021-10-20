@@ -6,15 +6,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
-import com.evgenii.searchphoto.databinding.PhotoDetailFragmentNewBinding
+import com.evgenii.searchphoto.R
+import com.evgenii.searchphoto.databinding.PhotoDetailFragmentBinding
 import com.evgenii.searchphoto.presentation.utils.AnimationUtils
+import com.evgenii.searchphoto.presentation.utils.PicassoUtils.Companion.loadFromPicasso
 import com.evgenii.searchphoto.presentation.viewmodel.PhotoDetailViewModel
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,11 +27,12 @@ class PhotoDetailFragment : Fragment() {
 
     private val viewModel: PhotoDetailViewModel by viewModels()
 
-    private var _binding: PhotoDetailFragmentNewBinding? = null
-    private val binding: PhotoDetailFragmentNewBinding
+    private var _binding: PhotoDetailFragmentBinding? = null
+    private val binding: PhotoDetailFragmentBinding
         get() = _binding ?: throw RuntimeException("PhotosListFragmentBinding is null")
 
     private val args by navArgs<PhotoDetailFragmentArgs>()
+    private val navController: NavController by lazy { findNavController() }
 
     private val photoId by lazy { args.photoId }
     private val largeImageUrl by lazy { args.largeImageUrl }
@@ -36,7 +42,7 @@ class PhotoDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = PhotoDetailFragmentNewBinding.inflate(inflater)
+        _binding = PhotoDetailFragmentBinding.inflate(inflater)
         return binding.root
     }
 
@@ -48,40 +54,33 @@ class PhotoDetailFragment : Fragment() {
         viewModel.loadDetailInfo(photoId)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     private fun setAnimationParam() {
-        Picasso.get()
-            .load(largeImageUrl)
-            .into(binding.ivPhoto)
+        binding.ivPhoto.loadFromPicasso(largeImageUrl, R.drawable.placeholder_main_image)
         sharedElementEnterTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
         ViewCompat.setTransitionName(
             binding.ivPhoto,
-            AnimationUtils.getUniqueTransitionName(photoId)
+            AnimationUtils.getUniqueTransitionLargePhoto(photoId)
         )
         ViewCompat.setTransitionName(
             binding.ivUserIcon,
-            AnimationUtils.getUniqueTransitionNameAvatar(photoId)
+            AnimationUtils.getUniqueTransitionUserPhoto(photoId)
         )
-
     }
 
-    private fun setButtonListener() {
-        binding.btnOpenInBrowser.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(viewModel.photoDetail.value?.pageURL)
-            startActivity(intent)
-        }
-    }
-
-    private fun initObservers() {
+    private fun initObservers() =
         with(viewModel) {
             photoDetail.observe(viewLifecycleOwner) { photoDetailItem ->
                 with(photoDetailItem) {
-                    if (userImageURL.isNotEmpty()){
-                        Picasso.get()
-                            .load(userImageURL)
-                            .into(binding.ivUserIcon)
-                    }
+                    binding.ivUserIcon.loadFromPicasso(
+                        userImageURL,
+                        R.drawable.placeholder_avatar
+                    )
                     binding.tvUserName.text = user
                     binding.tvPhotoLikes.text = likes
                     binding.tvPhotoDownloads.text = downloads
@@ -90,19 +89,35 @@ class PhotoDetailFragment : Fragment() {
                     binding.tvPhotoViews.text = views
                 }
             }
-            loadingState.observe(viewLifecycleOwner) { loadResult ->
-//                when(loadResult){
-//                    is EmptyResult -> TODO()
-//                    is ErrorResult -> TODO()
-//                    is PendingResult -> binding.pbLoadImage.isVisible = true
-//                    is SuccessResult<*> -> binding.pbLoadImage.isVisible = false
-//                }
+            loadingProgressVisibility.observe(viewLifecycleOwner) { visibility ->
+                binding.pbLoadDetailInfo.isVisible = visibility
+            }
+            actionShowToastError.observe(viewLifecycleOwner) {
+                showToastError()
+            }
+            actionToBackScreen.observe(viewLifecycleOwner) {
+                navController.popBackStack()
+            }
+            actionOpenInBrowser.observe(viewLifecycleOwner) { event ->
+                event.getValue()?.let { url -> openInBrowser(url) }
             }
         }
+
+    private fun setButtonListener() =
+        binding.btnOpenInBrowser.setOnClickListener {
+            viewModel.onOpenInBrowserClick()
+        }
+
+    private fun openInBrowser(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        startActivity(intent)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
+    private fun showToastError() =
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.error_load_detail),
+            Toast.LENGTH_LONG
+        ).show()
 }

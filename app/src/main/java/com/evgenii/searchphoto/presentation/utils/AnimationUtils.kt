@@ -1,24 +1,29 @@
 package com.evgenii.searchphoto.presentation.utils
 
 import android.view.View
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 
-object AnimationUtils {
+class AnimationUtils {
 
-    private const val TRANSITION_NAME_PREFIX = "imageHeader_"
-    private const val TRANSITION_NAME_AVATAR_PREFIX = "imageAvatar_"
+    companion object {
+        private const val TRANSITION_PHOTO_HEADER_PREFIX = "photoHeader_"
+        private const val TRANSITION_USER_IMAGE_PREFIX = "userImage_"
 
-    fun getUniqueTransitionName(cityId: Int): String  {
-        return "$TRANSITION_NAME_PREFIX$cityId"
+        fun getUniqueTransitionLargePhoto(photoId: Int): String =
+            "$TRANSITION_PHOTO_HEADER_PREFIX$photoId"
+
+        fun getUniqueTransitionUserPhoto(photoId: Int): String =
+            "$TRANSITION_USER_IMAGE_PREFIX$photoId"
+
+        fun getTransitionExtras(viewLargePhoto: View, viewUserImage: View, id: Int):
+                FragmentNavigator.Extras {
+            val transitionLargePhoto = getUniqueTransitionLargePhoto(id)
+            val transitionUserPhoto = getUniqueTransitionUserPhoto(id)
+            return FragmentNavigatorExtras(
+                viewLargePhoto to transitionLargePhoto,
+                viewUserImage to transitionUserPhoto
+            )
+        }
     }
-
-    fun getUniqueTransitionNameAvatar(cityId: Int): String  {
-        return "$TRANSITION_NAME_AVATAR_PREFIX$cityId"
-    }
-
-    fun getTransitionExtras(view: View, cityId: Int) =
-        FragmentNavigatorExtras(view to getUniqueTransitionName(cityId))
-
-    fun getTransitionExtrasAvatar(view: View, cityId: Int) =
-        FragmentNavigatorExtras(view to getUniqueTransitionNameAvatar(cityId))
 }

@@ -1,5 +1,6 @@
 package com.evgenii.searchphoto.di
 
+import androidx.paging.PagingConfig
 import com.evgenii.searchphoto.data.api.PhotosApi
 import com.evgenii.searchphoto.data.api.RemoteDataSource
 import com.evgenii.searchphoto.data.mapper.HitApiMapper
@@ -17,13 +18,24 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePhotoApi(remoteDataSource: RemoteDataSource): PhotosApi{
-        return remoteDataSource.buildApi()
-    }
+    fun providePhotoApi(remoteDataSource: RemoteDataSource): PhotosApi =
+        remoteDataSource.buildApi()
 
     @Provides
     @Singleton
-    fun provideRepositoryApi(api: PhotosApi, mapper: HitApiMapper): PhotoSearchRepository{
-        return PhotoSearchRepositoryImpl(api, mapper)
-    }
+    fun providePagingConfig(): PagingConfig =
+        PagingConfig(
+            pageSize = 20,
+            enablePlaceholders = true,
+            prefetchDistance = 5
+        )
+
+    @Provides
+    @Singleton
+    fun provideRepositoryApi(
+        api: PhotosApi,
+        mapper: HitApiMapper,
+        pagingConfig: PagingConfig
+    ): PhotoSearchRepository =
+        PhotoSearchRepositoryImpl(api, mapper, pagingConfig)
 }

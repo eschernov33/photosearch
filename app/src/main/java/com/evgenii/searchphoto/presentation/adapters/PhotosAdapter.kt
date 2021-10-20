@@ -23,8 +23,6 @@ class PhotosAdapter(
 
     override fun onBindViewHolder(holder: PhotosListViewHolder, position: Int) {
         val photo = getItem(position)
-        if (photo != null) {
-            holder.bind(photo, onItemClick)
-        }
+        holder.bind(photo, onItemClick)
     }
 }

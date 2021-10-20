@@ -2,12 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/photosListFragment">
+    app:startDestination="@id/photoListFragment">
 
     <fragment
-        android:id="@+id/photosListFragment"
-        android:name="com.evgenii.searchphoto.presentation.fragments.PhotosListFragment"
-        android:label="PhotosListFragment" >
+        android:id="@+id/photoListFragment"
+        android:name="com.evgenii.searchphoto.presentation.fragments.PhotoListFragment"
+        android:label="PhotosListFragment">
 
         <action
             android:id="@+id/action_photosListFragment_to_photoDetailFragment"
@@ -22,8 +22,8 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_photoDetailFragment_to_photosListFragment"
-            app:popUpTo="@id/photosListFragment"
-            app:destination="@id/photosListFragment" />
+            app:destination="@id/photoListFragment"
+            app:popUpTo="@id/photoListFragment" />
         <argument
             android:name="largeImageUrl"
             app:argType="string" />

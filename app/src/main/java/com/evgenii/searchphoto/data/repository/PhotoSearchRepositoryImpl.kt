@@ -16,24 +16,21 @@ import javax.inject.Inject
 
 class PhotoSearchRepositoryImpl @Inject constructor(
     private val api: PhotosApi,
-    private val mapper: HitApiMapper
+    private val mapper: HitApiMapper,
+    private val pagingConfig: PagingConfig
 ) : PhotoSearchRepository {
 
     override fun getPhotos(
         query: String
     ): LiveData<PagingData<Photo>> {
-        val pagingSource = PhotoListRxPageSource(api, query)
+        val pagingSource = PhotoListRxPageSource(api, query, mapper)
         return Pager(
-            config = PagingConfig(
-                pageSize = 20,
-                enablePlaceholders = true,
-                prefetchDistance = 1
-            ),
+            config = pagingConfig,
             pagingSourceFactory = { pagingSource }
         ).liveData
     }
 
     override fun getPhotoById(photoId: Int): Single<List<PhotoDetail>> {
-        return api.getPhotoById(photoId).map { mapper.mapHitApiItemListToPhotoDetail(it) }
+        return api.getPhotoById(photoId).map { mapper.mapHitApiResponseToListPhotoDetail(it) }
     }
 }
