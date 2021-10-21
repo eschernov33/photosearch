@@ -6,5 +6,4 @@
     <string name="error_empty_result">Nothing found</string>
     <string name="content_description_logo">Logotype</string>
     <string name="error_load_description">An error occurred while loading: %1$s</string>
-    <string name="error_load_detail">Failed to load data!</string>
 </resources>

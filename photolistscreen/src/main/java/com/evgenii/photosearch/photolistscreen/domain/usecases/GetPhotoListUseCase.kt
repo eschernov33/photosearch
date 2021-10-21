@@ -2,7 +2,7 @@ package com.evgenii.photosearch.photolistscreen.domain.usecases
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingData
-import com.evgenii.core.domain.model.Photo
+import com.evgenii.photosearch.core.domain.model.Photo
 import com.evgenii.photosearch.photolistscreen.domain.repository.PhotoSearchRepository
 import javax.inject.Inject
 

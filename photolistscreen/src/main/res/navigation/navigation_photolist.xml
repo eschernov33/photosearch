@@ -7,12 +7,6 @@
     <fragment
         android:id="@+id/photoListFragment"
         android:name="com.evgenii.photosearch.photolistscreen.presentation.fragments.PhotoListFragment"
-        android:label="PhotosListFragment">
-
-        <!--        <action-->
-        <!--            android:id="@+id/action_photosListFragment_to_photoDetailFragment"-->
-        <!--            app:destination="@id/photoDetailFragment"-->
-        <!--            />-->
-    </fragment>
+        android:label="PhotosListFragment" />
 
 </navigation>

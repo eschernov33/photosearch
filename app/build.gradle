@@ -24,10 +24,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -45,17 +47,8 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$app_compat"
     implementation "com.google.android.material:material:$material"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout"
-    implementation "com.squareup.moshi:moshi-kotlin:$moshi"
-    implementation "com.squareup.retrofit2:retrofit:$retrofit"
-    implementation "com.squareup.retrofit2:converter-moshi:$retrofit"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_rx"
-    implementation "com.squareup.picasso:picasso:$picasso"
     implementation "androidx.paging:paging-runtime-ktx:$paging"
     implementation "androidx.paging:paging-rxjava2-ktx:$paging"
-    implementation "io.reactivex.rxjava2:rxkotlin:$rx_ktx"
-    implementation "io.reactivex.rxjava2:rxandroid:$rx_android"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_ktx"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_ktx"
     implementation "androidx.fragment:fragment-ktx:$fragment_ktx"
     implementation "com.google.dagger:hilt-android:$hilt_ver"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
@@ -66,5 +59,4 @@ dependencies {
     testImplementation "junit:junit:$junit"
     androidTestImplementation "androidx.test.ext:junit:$junit_android"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
-
 }

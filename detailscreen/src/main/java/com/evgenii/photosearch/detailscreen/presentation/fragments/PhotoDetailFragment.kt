@@ -15,9 +15,9 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
-import com.evgenii.core.presentation.utils.AnimationUtils
-import com.evgenii.core.presentation.utils.PicassoUtils.Companion.loadFromPicasso
 import com.evgenii.photosearch.R
+import com.evgenii.photosearch.core.presentation.utils.AnimationUtils
+import com.evgenii.photosearch.core.presentation.utils.PicassoUtils.Companion.loadFromPicasso
 import com.evgenii.photosearch.databinding.PhotoDetailFragmentBinding
 import com.evgenii.photosearch.detailscreen.presentation.viewmodel.PhotoDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint

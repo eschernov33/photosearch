@@ -3,9 +3,9 @@ package com.evgenii.photosearch.detailscreen.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.evgenii.core.domain.model.PhotoDetail
-import com.evgenii.core.presentation.model.Event
-import com.evgenii.core.presentation.model.PhotoDetailItem
+import com.evgenii.photosearch.core.domain.model.PhotoDetail
+import com.evgenii.photosearch.core.presentation.model.Event
+import com.evgenii.photosearch.core.presentation.model.PhotoDetailItem
 import com.evgenii.photosearch.detailscreen.domain.usecases.GetPhotoByIdUseCase
 import com.evgenii.photosearch.detailscreen.presentation.mapper.PhotoItemMapper
 import dagger.hilt.android.lifecycle.HiltViewModel

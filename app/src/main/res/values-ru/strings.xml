@@ -1,18 +1,3 @@
 <resources>
     <string name="app_name">PhotosList</string>
-    <string name="content_description_photo">Фотография</string>
-    <string name="content_description_icon_download">Иконка загрузок</string>
-    <string name="content_description_icon_likes">Иконка лайков</string>
-    <string name="hint_photo_search">Поиск картинок</string>
-    <string name="error_empty_result">Ничего не найдено</string>
-    <string name="content_description_logo">Логотип</string>
-    <string name="error_load_description">Произошла ошибка при загрузке: %1$s</string>
-    <string name="error_load_detail">Не удалось загрузить данные!</string>
-    <string name="title_information">ИНФОРМАЦИЯ</string>
-    <string name="title_views">Просмотров:</string>
-    <string name="title_loads">Загрузок:</string>
-    <string name="title_likes">Нравится:</string>
-    <string name="title_comments">Комментарии:</string>
-    <string name="content_description_button_open_in_browser">Кнопка перехода в веб версию</string>
-    <string name="content_description_main_image">Основное изображение</string>
 </resources>
