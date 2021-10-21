@@ -5,13 +5,12 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
+import com.evgenii.core.data.mapper.HitApiMapper
+import com.evgenii.core.domain.model.Photo
+import com.evgenii.photosearch.photolistscreen.domain.repository.PhotoSearchRepository
 import com.evgenii.searchphoto.data.api.PhotosApi
-import com.evgenii.searchphoto.data.mapper.HitApiMapper
 import com.evgenii.searchphoto.data.source.PhotoListRxPageSource
-import com.evgenii.searchphoto.domain.model.Photo
-import com.evgenii.searchphoto.domain.model.PhotoDetail
-import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
-import io.reactivex.Single
+
 import javax.inject.Inject
 
 class PhotoSearchRepositoryImpl @Inject constructor(
@@ -28,9 +27,5 @@ class PhotoSearchRepositoryImpl @Inject constructor(
             config = pagingConfig,
             pagingSourceFactory = { pagingSource }
         ).liveData
-    }
-
-    override fun getPhotoById(photoId: Int): Single<List<PhotoDetail>> {
-        return api.getPhotoById(photoId).map { mapper.mapHitApiResponseToListPhotoDetail(it) }
     }
 }

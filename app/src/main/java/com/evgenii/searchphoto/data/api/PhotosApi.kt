@@ -1,6 +1,6 @@
 package com.evgenii.searchphoto.data.api
 
-import com.evgenii.searchphoto.data.model.HitApiResponse
+import com.evgenii.core.data.model.HitApiResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

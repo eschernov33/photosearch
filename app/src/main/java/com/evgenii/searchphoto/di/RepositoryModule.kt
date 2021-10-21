@@ -1,11 +1,13 @@
 package com.evgenii.searchphoto.di
 
 import androidx.paging.PagingConfig
+import com.evgenii.core.data.mapper.HitApiMapper
+import com.evgenii.photosearch.detailscreen.domain.repository.PhotoSearchByIdRepository
+import com.evgenii.photosearch.photolistscreen.domain.repository.PhotoSearchRepository
 import com.evgenii.searchphoto.data.api.PhotosApi
 import com.evgenii.searchphoto.data.api.RemoteDataSource
-import com.evgenii.searchphoto.data.mapper.HitApiMapper
+import com.evgenii.searchphoto.data.repository.PhotoSearchByIdRepositoryImpl
 import com.evgenii.searchphoto.data.repository.PhotoSearchRepositoryImpl
-import com.evgenii.searchphoto.domain.repository.PhotoSearchRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,4 +40,13 @@ class RepositoryModule {
         pagingConfig: PagingConfig
     ): PhotoSearchRepository =
         PhotoSearchRepositoryImpl(api, mapper, pagingConfig)
+
+    @Provides
+    @Singleton
+    fun provideRepositoryByIdApi(
+        api: PhotosApi,
+        mapper: HitApiMapper,
+        pagingConfig: PagingConfig
+    ): PhotoSearchByIdRepository =
+        PhotoSearchByIdRepositoryImpl(api, mapper, pagingConfig)
 }

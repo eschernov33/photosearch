@@ -2,30 +2,9 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/photoListFragment">
+    app:startDestination="@id/photolist_nav_graph">
 
-    <fragment
-        android:id="@+id/photoListFragment"
-        android:name="com.evgenii.searchphoto.presentation.fragments.PhotoListFragment"
-        android:label="PhotosListFragment">
+    <include app:graph="@navigation/navigation_photolist" />
+    <include app:graph="@navigation/navigation_detailscreen" />
 
-        <action
-            android:id="@+id/action_photosListFragment_to_photoDetailFragment"
-            app:destination="@id/photoDetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/photoDetailFragment"
-        android:name="com.evgenii.searchphoto.presentation.fragments.PhotoDetailFragment"
-        android:label="PhotoDetailFragment" >
-        <argument
-            android:name="photoId"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_photoDetailFragment_to_photosListFragment"
-            app:destination="@id/photoListFragment"
-            app:popUpTo="@id/photoListFragment" />
-        <argument
-            android:name="largeImageUrl"
-            app:argType="string" />
-    </fragment>
 </navigation>

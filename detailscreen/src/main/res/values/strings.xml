@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">PhotosList</string>
+    <string name="content_description_photo">Photo</string>
+    <string name="content_description_icon_download">Download icon</string>
+    <string name="content_description_icon_likes">Like icon</string>
+    <string name="hint_photo_search">Search pictures</string>
+    <string name="error_empty_result">Nothing found</string>
+    <string name="content_description_logo">Logotype</string>
+    <string name="error_load_description">An error occurred while loading: %1$s</string>
+    <string name="error_load_detail">Failed to load data!</string>
+    <string name="title_information">INFORMATION</string>
+    <string name="title_views">Views:</string>
+    <string name="title_loads">Downloads:</string>
+    <string name="title_likes">Likes:</string>
+    <string name="title_comments">Comments:</string>
+    <string name="content_description_button_open_in_browser">Button go to web version</string>
+    <string name="content_description_main_image">Main image</string>
+</resources>

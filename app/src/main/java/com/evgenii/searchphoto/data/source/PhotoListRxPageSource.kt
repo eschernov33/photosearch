@@ -2,9 +2,9 @@ package com.evgenii.searchphoto.data.source
 
 import androidx.paging.PagingState
 import androidx.paging.rxjava2.RxPagingSource
+import com.evgenii.core.data.mapper.HitApiMapper
+import com.evgenii.core.domain.model.Photo
 import com.evgenii.searchphoto.data.api.PhotosApi
-import com.evgenii.searchphoto.data.mapper.HitApiMapper
-import com.evgenii.searchphoto.domain.model.Photo
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber

@@ -38,7 +38,9 @@ android {
 }
 
 dependencies {
-
+    implementation project(':core')
+    implementation project(':detailscreen')
+    implementation project(':photolistscreen')
     implementation "androidx.core:core-ktx:$core_ktx"
     implementation "androidx.appcompat:appcompat:$app_compat"
     implementation "com.google.android.material:material:$material"

@@ -1,7 +1,7 @@
 package com.evgenii.searchphoto.data.mapper
 
-import com.evgenii.searchphoto.data.model.HitApi
-import com.evgenii.searchphoto.data.model.HitApiResponse
+import com.evgenii.core.data.model.HitApi
+import com.evgenii.core.data.model.HitApiResponse
 import com.evgenii.searchphoto.domain.model.Photo
 import com.evgenii.searchphoto.domain.model.PhotoDetail
 import javax.inject.Inject

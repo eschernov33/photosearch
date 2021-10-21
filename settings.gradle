@@ -7,3 +7,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "PhotoSearch"
 include ':app'
+include ':detailscreen'
+include ':core'
+include ':photolistscreen'

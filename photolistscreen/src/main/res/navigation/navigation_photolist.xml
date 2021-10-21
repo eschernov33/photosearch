@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/photolist_nav_graph"
+    app:startDestination="@id/photoListFragment">
+
+    <fragment
+        android:id="@+id/photoListFragment"
+        android:name="com.evgenii.photosearch.photolistscreen.presentation.fragments.PhotoListFragment"
+        android:label="PhotosListFragment">
+
+        <!--        <action-->
+        <!--            android:id="@+id/action_photosListFragment_to_photoDetailFragment"-->
+        <!--            app:destination="@id/photoDetailFragment"-->
+        <!--            />-->
+    </fragment>
+
+</navigation>
