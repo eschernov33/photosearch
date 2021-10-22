@@ -8,15 +8,15 @@ class PhotoItemMapper @Inject constructor() {
 
     fun mapPhotoToPhotoDetailItem(photo: PhotoDetail): PhotoDetailItem =
         PhotoDetailItem(
-            photo.id,
-            photo.user,
-            photo.userImageURL,
-            photo.likes.toString(),
-            photo.downloads.toString(),
-            photo.largeImageURL,
-            photo.tags,
-            photo.comments.toString(),
-            photo.views.toString(),
-            photo.pageURL
+            id = photo.id,
+            user = photo.user,
+            userImageURL = photo.userImageURL,
+            likes = photo.likes.toString(),
+            downloads = photo.downloads.toString(),
+            largeImageURL = photo.largeImageURL,
+            tags = photo.tags,
+            comments = photo.comments.toString(),
+            views = photo.views.toString(),
+            pageURL = photo.pageURL
         )
 }

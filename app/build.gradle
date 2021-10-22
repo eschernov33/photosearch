@@ -50,11 +50,11 @@ dependencies {
     implementation "androidx.paging:paging-runtime-ktx:$paging"
     implementation "androidx.paging:paging-rxjava2-ktx:$paging"
     implementation "androidx.fragment:fragment-ktx:$fragment_ktx"
-    implementation "com.google.dagger:hilt-android:$hilt_ver"
+    implementation "com.google.dagger:hilt-android:$hilt_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation"
     implementation "com.jakewharton.timber:timber:$timber"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_ver"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     testImplementation "junit:junit:$junit"
     androidTestImplementation "androidx.test.ext:junit:$junit_android"

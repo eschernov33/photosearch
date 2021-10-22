@@ -10,7 +10,9 @@ import javax.inject.Inject
 class RemoteDataSource @Inject constructor() {
 
     fun buildApi(): PhotosApi {
-        val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
+        val moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
         val retrofit = Retrofit.Builder()
             .baseUrl(API_PIXABAY_URL)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

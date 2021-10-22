@@ -17,7 +17,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
 import com.evgenii.photosearch.R
 import com.evgenii.photosearch.core.presentation.utils.AnimationUtils
-import com.evgenii.photosearch.core.presentation.utils.PicassoUtils.Companion.loadFromPicasso
+import com.evgenii.photosearch.core.presentation.utils.PicassoUtils.Companion.loadFromUrl
 import com.evgenii.photosearch.databinding.PhotoDetailFragmentBinding
 import com.evgenii.photosearch.detailscreen.presentation.viewmodel.PhotoDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,13 +54,15 @@ class PhotoDetailFragment : Fragment() {
         viewModel.loadDetailInfo(photoId)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
+    /**
+     * The pixabay library generates a new url to the image, with each request.
+     * In order not to download it again and get it from the cache,
+     * as well as the animation was displayed smoothly, the link is passed in parameters.
+     *
+     * API Pixabay Documentation- [https://pixabay.com/api/docs/]
+     */
     private fun setAnimationParam() {
-        binding.ivPhoto.loadFromPicasso(largeImageUrl, R.drawable.placeholder_main_image)
+        binding.ivPhoto.loadFromUrl(largeImageUrl, R.drawable.placeholder_main_image)
         sharedElementEnterTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
         ViewCompat.setTransitionName(
@@ -77,7 +79,7 @@ class PhotoDetailFragment : Fragment() {
         with(viewModel) {
             photoDetail.observe(viewLifecycleOwner) { photoDetailItem ->
                 with(photoDetailItem) {
-                    binding.ivUserIcon.loadFromPicasso(
+                    binding.ivUserIcon.loadFromUrl(
                         userImageURL,
                         R.drawable.placeholder_avatar
                     )
@@ -120,4 +122,9 @@ class PhotoDetailFragment : Fragment() {
             getString(R.string.error_load_detail),
             Toast.LENGTH_LONG
         ).show()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

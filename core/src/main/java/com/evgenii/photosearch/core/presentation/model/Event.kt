@@ -7,7 +7,9 @@ class Event<T>(
     private var handled: Boolean = false
 
     fun getValue(): T? {
-        if (handled) return null
+        if (handled) {
+            return null
+        }
         handled = true
         return value
     }

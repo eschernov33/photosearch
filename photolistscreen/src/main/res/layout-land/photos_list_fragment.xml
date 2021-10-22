@@ -43,7 +43,7 @@
 
     <include
         android:id="@+id/areaPhotoList"
-        layout="@layout/area_photo_list"
+        layout="@layout/photo_list_block"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"

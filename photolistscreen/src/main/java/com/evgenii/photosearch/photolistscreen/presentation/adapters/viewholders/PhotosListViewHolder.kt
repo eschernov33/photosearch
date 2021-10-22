@@ -4,7 +4,7 @@ import androidx.core.view.ViewCompat
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.recyclerview.widget.RecyclerView
 import com.evgenii.photosearch.core.presentation.utils.AnimationUtils
-import com.evgenii.photosearch.core.presentation.utils.PicassoUtils.Companion.loadFromPicasso
+import com.evgenii.photosearch.core.presentation.utils.PicassoUtils.Companion.loadFromUrl
 import com.evgenii.photosearch.photolistscreen.R
 import com.evgenii.photosearch.photolistscreen.databinding.ItemPhotoBinding
 import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
@@ -44,8 +44,8 @@ class PhotosListViewHolder(private val binding: ItemPhotoBinding) :
         tvPhotoTag.text = photo.tags
         tvPhotoDownloads.text = photo.downloads
         tvPhotoLikeCount.text = photo.likes
-        ivUserIcon.loadFromPicasso(photo.userImageURL, R.drawable.placeholder_avatar)
-        ivPhotoCard.loadFromPicasso(
+        ivUserIcon.loadFromUrl(photo.userImageURL, R.drawable.placeholder_avatar)
+        ivPhotoCard.loadFromUrl(
             photo.largeImageURL,
             R.drawable.placeholder_main_image
         )

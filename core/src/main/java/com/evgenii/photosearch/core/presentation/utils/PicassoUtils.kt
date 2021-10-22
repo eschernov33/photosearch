@@ -7,7 +7,7 @@ import com.squareup.picasso.Picasso
 class PicassoUtils {
 
     companion object {
-        fun ImageView.loadFromPicasso(url: String, @DrawableRes placeholderImageRes: Int) =
+        fun ImageView.loadFromUrl(url: String, @DrawableRes placeholderImageRes: Int) =
             if (url.isNotEmpty()) {
                 Picasso.get()
                     .load(url)

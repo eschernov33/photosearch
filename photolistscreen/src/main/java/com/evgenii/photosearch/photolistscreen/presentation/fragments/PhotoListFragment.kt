@@ -66,6 +66,7 @@ class PhotoListFragment : Fragment() {
         initObservers()
         initPhotoListAdapter()
         setEditTextListener()
+        setRetryButtonListener()
     }
 
     private fun setAnimSharedTransition() {
@@ -75,13 +76,16 @@ class PhotoListFragment : Fragment() {
 
     private fun initObservers() =
         with(viewModel) {
-            photoListAreaViewsVisibility.observe(viewLifecycleOwner) { photoListAreaParam ->
-                binding.areaPhotoList.root.isVisible = photoListAreaParam.areaVisible
-                binding.areaPhotoList.rvPhotoList.isVisible = photoListAreaParam.listVisible
-                binding.areaPhotoList.progressBarLoadPhotos.isVisible =
-                    photoListAreaParam.progressPhotoLoadVisible
-                binding.areaPhotoList.tvSearchErrorMessage.isVisible =
-                    photoListAreaParam.errorMessageVisible
+            photoListViewsVisibility.observe(viewLifecycleOwner) { photoListAreaParam ->
+                with(binding.areaPhotoList) {
+                    root.isVisible = photoListAreaParam.areaVisible
+                    rvPhotoList.isVisible = photoListAreaParam.listVisible
+                    progressBarLoadPhotos.isVisible =
+                        photoListAreaParam.progressPhotoLoadVisible
+                    tvSearchErrorMessage.isVisible =
+                        photoListAreaParam.errorMessageVisible
+                    btnRetrySearch.isVisible = photoListAreaParam.btnRetryVisible
+                }
             }
             photoList.observe(viewLifecycleOwner) { pagingData ->
                 adapter.submitData(lifecycle, pagingData)
@@ -94,7 +98,7 @@ class PhotoListFragment : Fragment() {
                     }
                     ErrorMessage.Type.NETWORK -> {
                         binding.areaPhotoList.tvSearchErrorMessage.text =
-                            getString(R.string.error_load_description, errorMessage.message)
+                            getString(R.string.error_load_description)
                     }
                 }
 
@@ -124,6 +128,15 @@ class PhotoListFragment : Fragment() {
             } else
                 false
         }
+
+    private fun setRetryButtonListener() {
+        binding.areaPhotoList.btnRetrySearch.setOnClickListener {
+            viewModel.onRetryClick(binding.etSearch.text.toString())
+            viewModel.photoList.observe(viewLifecycleOwner) { pagingData ->
+                adapter.submitData(lifecycle, pagingData)
+            }
+        }
+    }
 
     private fun onItemClick(
         extras: FragmentNavigator.Extras,
@@ -155,8 +168,8 @@ class PhotoListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         binding.areaPhotoList.rvPhotoList.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
         adapter.removeLoadStateListener { loadStateListener }
         _adapter = null

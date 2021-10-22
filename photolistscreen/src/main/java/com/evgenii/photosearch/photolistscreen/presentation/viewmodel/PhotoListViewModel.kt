@@ -5,13 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.paging.*
+import com.evgenii.photosearch.core.presentation.model.Event
 import com.evgenii.photosearch.photolistscreen.domain.usecases.GetPhotoListUseCase
 import com.evgenii.photosearch.photolistscreen.presentation.mapper.PhotoItemMapper
 import com.evgenii.photosearch.photolistscreen.presentation.model.ErrorMessage
-import com.evgenii.photosearch.photolistscreen.presentation.model.Event
 import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
-import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoListAreaViewsVisibility
+import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoListViewsVisibility
 import dagger.hilt.android.lifecycle.HiltViewModel
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,8 +25,8 @@ class PhotoListViewModel @Inject constructor(
     val photoList: LiveData<PagingData<PhotoItem>>
         get() = _photoList
 
-    private var _photoListAreaViewVisibility = MutableLiveData<PhotoListAreaViewsVisibility>()
-    val photoListAreaViewsVisibility: LiveData<PhotoListAreaViewsVisibility> =
+    private var _photoListAreaViewVisibility = MutableLiveData<PhotoListViewsVisibility>()
+    val photoListViewsVisibility: LiveData<PhotoListViewsVisibility> =
         _photoListAreaViewVisibility
 
     private var _errorMessage = MutableLiveData<ErrorMessage>()
@@ -56,7 +57,8 @@ class PhotoListViewModel @Inject constructor(
     fun onLoadStateListener(loadState: CombinedLoadStates, itemCount: Int) {
         val refreshState = loadState.refresh
         if (refreshState is LoadState.Error) {
-            updatePhotoListAreaViewVisibility(errorMessageVisible = true)
+            updatePhotoListAreaViewVisibility(errorMessageVisible = true, btnRetryVisible = true)
+            Timber.d(refreshState.error.localizedMessage)
             _errorMessage.value =
                 ErrorMessage(ErrorMessage.Type.NETWORK, refreshState.error.localizedMessage)
         } else if (loadState.refresh !is LoadState.Loading) {
@@ -75,15 +77,21 @@ class PhotoListViewModel @Inject constructor(
         _actionShowDetails.value = Event(photoItem)
     }
 
+    fun onRetryClick(query: String) {
+        searchPhotos(query)
+    }
+
     private fun updatePhotoListAreaViewVisibility(
         listVisible: Boolean = false,
         progressPhotoLoadVisible: Boolean = false,
-        errorMessageVisible: Boolean = false
+        errorMessageVisible: Boolean = false,
+        btnRetryVisible: Boolean = false
     ) {
-        _photoListAreaViewVisibility.value = PhotoListAreaViewsVisibility(
+        _photoListAreaViewVisibility.value = PhotoListViewsVisibility(
             listVisible = listVisible,
             progressPhotoLoadVisible = progressPhotoLoadVisible,
-            errorMessageVisible = errorMessageVisible
+            errorMessageVisible = errorMessageVisible,
+            btnRetryVisible = btnRetryVisible
         )
     }
 }

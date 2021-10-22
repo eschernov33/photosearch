@@ -1,8 +1,9 @@
 package com.evgenii.photosearch.photolistscreen.presentation.model
 
-class PhotoListAreaViewsVisibility(
+class PhotoListViewsVisibility(
     val listVisible: Boolean,
     val progressPhotoLoadVisible: Boolean,
     val errorMessageVisible: Boolean,
-    val areaVisible: Boolean = listVisible || errorMessageVisible
+    val btnRetryVisible: Boolean,
+    val areaVisible: Boolean = listVisible || errorMessageVisible,
 )
