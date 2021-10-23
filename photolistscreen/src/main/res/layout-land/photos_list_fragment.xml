@@ -26,7 +26,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:hint="@string/hint_photo_search"
-        app:layout_constraintBottom_toTopOf="@id/areaPhotoList"
+        app:layout_constraintBottom_toTopOf="@id/photoListBlock"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivLogo"
         app:layout_constraintTop_toTopOf="parent"
@@ -42,7 +42,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <include
-        android:id="@+id/areaPhotoList"
+        android:id="@+id/photoListBlock"
         layout="@layout/photo_list_block"
         android:layout_width="0dp"
         android:layout_height="0dp"

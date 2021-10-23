@@ -6,16 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
 import com.evgenii.photosearch.R
+import com.evgenii.photosearch.core.presentation.fragments.BaseFragment
 import com.evgenii.photosearch.core.presentation.utils.AnimationUtils
 import com.evgenii.photosearch.core.presentation.utils.PicassoUtils.Companion.loadFromUrl
 import com.evgenii.photosearch.databinding.PhotoDetailFragmentBinding
@@ -23,7 +22,7 @@ import com.evgenii.photosearch.detailscreen.presentation.viewmodel.PhotoDetailVi
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PhotoDetailFragment : Fragment() {
+class PhotoDetailFragment : BaseFragment() {
 
     private val viewModel: PhotoDetailViewModel by viewModels()
 
@@ -48,10 +47,19 @@ class PhotoDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setToolbar()
         setAnimationParam()
         initObservers()
         setButtonListener()
         viewModel.loadDetailInfo(photoId)
+    }
+
+    private fun setToolbar() {
+        val toolbar = binding.toolbarPhotoDetail
+        toolbar.setNavigationIcon(R.drawable.ic_back_button)
+        toolbar.setNavigationOnClickListener {
+            viewModel.onBackButtonPressed()
+        }
     }
 
     /**
@@ -75,35 +83,45 @@ class PhotoDetailFragment : Fragment() {
         )
     }
 
-    private fun initObservers() =
+    private fun initObservers() {
+        photoDetailObserve()
+        photoLoadingObserve()
+        eventsObserve()
+    }
+
+    private fun photoDetailObserve() {
+        viewModel.photoDetail.observe(viewLifecycleOwner) { photoDetailItem ->
+            with(photoDetailItem) {
+                binding.ivUserIcon.loadFromUrl(userImageURL, R.drawable.placeholder_avatar)
+                binding.tvUserName.text = user
+                binding.layoutInformation.tvPhotoLikes.text = likes
+                binding.layoutInformation.tvPhotoDownloads.text = downloads
+                binding.tvPhotoTags.text = tags
+                binding.layoutInformation.tvPhotoComments.text = comments
+                binding.layoutInformation.tvPhotoViews.text = views
+            }
+        }
+    }
+
+    private fun photoLoadingObserve() {
+        viewModel.isPhotoLoading.observe(viewLifecycleOwner) { visibility ->
+            binding.pbLoadDetailInfo.isVisible = visibility
+        }
+    }
+
+    private fun eventsObserve() {
         with(viewModel) {
-            photoDetail.observe(viewLifecycleOwner) { photoDetailItem ->
-                with(photoDetailItem) {
-                    binding.ivUserIcon.loadFromUrl(
-                        userImageURL,
-                        R.drawable.placeholder_avatar
-                    )
-                    binding.tvUserName.text = user
-                    binding.tvPhotoLikes.text = likes
-                    binding.tvPhotoDownloads.text = downloads
-                    binding.tvPhotoTags.text = tags
-                    binding.tvPhotoComments.text = comments
-                    binding.tvPhotoViews.text = views
-                }
+            eventShowToastError.observe(viewLifecycleOwner) {
+                showToast(getString(R.string.error_load_detail))
             }
-            loadingProgressVisibility.observe(viewLifecycleOwner) { visibility ->
-                binding.pbLoadDetailInfo.isVisible = visibility
-            }
-            actionShowToastError.observe(viewLifecycleOwner) {
-                showToastError()
-            }
-            actionToBackScreen.observe(viewLifecycleOwner) {
+            eventToBackScreen.observe(viewLifecycleOwner) {
                 navController.popBackStack()
             }
-            actionOpenInBrowser.observe(viewLifecycleOwner) { event ->
+            eventOpenInBrowser.observe(viewLifecycleOwner) { event ->
                 event.getValue()?.let { url -> openInBrowser(url) }
             }
         }
+    }
 
     private fun setButtonListener() =
         binding.btnOpenInBrowser.setOnClickListener {
@@ -115,13 +133,6 @@ class PhotoDetailFragment : Fragment() {
         intent.data = Uri.parse(url)
         startActivity(intent)
     }
-
-    private fun showToastError() =
-        Toast.makeText(
-            requireContext(),
-            getString(R.string.error_load_detail),
-            Toast.LENGTH_LONG
-        ).show()
 
     override fun onDestroyView() {
         super.onDestroyView()

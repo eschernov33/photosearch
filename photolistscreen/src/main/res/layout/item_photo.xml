@@ -11,7 +11,7 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clItemPhoto"
+        android:id="@+id/layoutItemPhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

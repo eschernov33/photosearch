@@ -2,7 +2,6 @@
 <resources>
     <color name="gray">#FF333333</color>
     <color name="red">#FFCF3232</color>
-    <color name="blue">#FF4D5EEA</color>
     <color name="white">#FFFFFFFF</color>
     <color name="icon_color_dark">@color/gray</color>
 </resources>

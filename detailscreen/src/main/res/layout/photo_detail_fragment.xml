@@ -35,7 +35,7 @@
                 app:layout_collapseMode="parallax" />
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbarCityDetail"
+                android:id="@+id/toolbarPhotoDetail"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin" />
@@ -43,14 +43,15 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollViewCityDetail"
+        android:id="@+id/nestedScrollViewPhotoDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/background_secondary"
         android:overScrollMode="never"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/clCityDetailContent"
+            android:id="@+id/layoutPhotoDetailContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="10dp">
@@ -89,17 +90,25 @@
                 app:layout_constraintTop_toBottomOf="@id/tvUserName"
                 tools:text="Photo tags" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardViewPhotoInfo"
+            <View
+                android:id="@+id/viewSeparator"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="4dp"
+                android:layout_height="1dp"
                 android:layout_marginVertical="10dp"
-                android:elevation="1dp"
-                app:layout_constraintBottom_toBottomOf="@id/viewEnd"
+                android:background="@color/gray_200"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivUserIcon" />
+                app:layout_constraintTop_toBottomOf="@id/tvPhotoTags" />
+
+            <include
+                android:id="@+id/layoutInformation"
+                layout="@layout/information_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/viewSeparator" />
 
             <ProgressBar
                 android:id="@+id/pbLoadDetailInfo"
@@ -107,123 +116,10 @@
                 android:layout_height="wrap_content"
                 android:elevation="2dp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/cardViewPhotoInfo"
-                app:layout_constraintEnd_toEndOf="@id/cardViewPhotoInfo"
-                app:layout_constraintStart_toStartOf="@id/cardViewPhotoInfo"
-                app:layout_constraintTop_toTopOf="@id/cardViewPhotoInfo" />
-
-            <View
-                android:id="@+id/viewSurface"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_margin="10dp"
-                app:layout_constraintBottom_toBottomOf="@id/viewEnd"
-                app:layout_constraintEnd_toEndOf="@id/cardViewPhotoInfo"
-                app:layout_constraintStart_toStartOf="@id/cardViewPhotoInfo"
-                app:layout_constraintTop_toTopOf="@id/cardViewPhotoInfo" />
-
-            <TextView
-                android:id="@+id/tvPhotoInformation"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:elevation="2dp"
-                android:text="@string/title_information"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@id/viewSurface"
-                app:layout_constraintTop_toTopOf="@id/viewSurface" />
-
-            <TextView
-                android:id="@+id/tvIconPhotoViews"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:elevation="2dp"
-                android:text="@string/title_views"
-                app:layout_constraintStart_toStartOf="@id/viewSurface"
-                app:layout_constraintTop_toBottomOf="@id/tvPhotoInformation" />
-
-            <TextView
-                android:id="@+id/tvPhotoViews"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:elevation="2dp"
-                app:layout_constraintBottom_toBottomOf="@id/tvIconPhotoViews"
-                app:layout_constraintStart_toEndOf="@id/tvIconPhotoViews"
-                app:layout_constraintTop_toTopOf="@id/tvIconPhotoViews"
-                tools:text="100000" />
-
-            <TextView
-                android:id="@+id/tvIconPhotoDownloads"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:elevation="2dp"
-                android:src="@drawable/ic_download"
-                android:text="@string/title_loads"
-                app:layout_constraintStart_toStartOf="@id/viewSurface"
-                app:layout_constraintTop_toBottomOf="@id/tvIconPhotoViews" />
-
-            <TextView
-                android:id="@+id/tvPhotoDownloads"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:elevation="2dp"
-                app:layout_constraintBottom_toBottomOf="@id/tvIconPhotoDownloads"
-                app:layout_constraintStart_toEndOf="@id/tvIconPhotoDownloads"
-                app:layout_constraintTop_toTopOf="@id/tvIconPhotoDownloads"
-                tools:text="54000" />
-
-            <TextView
-                android:id="@+id/tvIconPhotoLikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:elevation="2dp"
-                android:text="@string/title_likes"
-                app:layout_constraintStart_toStartOf="@id/viewSurface"
-                app:layout_constraintTop_toBottomOf="@id/tvIconPhotoDownloads" />
-
-            <TextView
-                android:id="@+id/tvPhotoLikes"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:elevation="2dp"
-                app:layout_constraintBottom_toBottomOf="@id/tvIconPhotoLikes"
-                app:layout_constraintStart_toEndOf="@id/tvIconPhotoLikes"
-                app:layout_constraintTop_toTopOf="@id/tvIconPhotoLikes"
-                tools:text="54000" />
-
-            <TextView
-                android:id="@+id/tvIconPhotoComments"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:elevation="2dp"
-                android:text="@string/title_comments"
-                app:layout_constraintStart_toStartOf="@id/viewSurface"
-                app:layout_constraintTop_toBottomOf="@id/tvIconPhotoLikes" />
-
-            <TextView
-                android:id="@+id/tvPhotoComments"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:elevation="2dp"
-                app:layout_constraintBottom_toBottomOf="@id/tvIconPhotoComments"
-                app:layout_constraintStart_toEndOf="@id/tvIconPhotoComments"
-                app:layout_constraintTop_toTopOf="@id/tvIconPhotoComments"
-                tools:text="54000" />
-
-            <View
-                android:id="@+id/viewEnd"
-                android:layout_width="0dp"
-                android:layout_height="10dp"
-                android:layout_marginTop="10dp"
-                app:layout_constraintStart_toStartOf="@id/viewSurface"
-                app:layout_constraintTop_toBottomOf="@id/tvIconPhotoComments" />
+                app:layout_constraintBottom_toBottomOf="@id/layoutInformation"
+                app:layout_constraintEnd_toEndOf="@id/layoutInformation"
+                app:layout_constraintStart_toStartOf="@id/layoutInformation"
+                app:layout_constraintTop_toTopOf="@id/layoutInformation" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

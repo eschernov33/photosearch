@@ -12,51 +12,54 @@ import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
 class PhotosListViewHolder(private val binding: ItemPhotoBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(
-        photo: PhotoItem?,
-        onItemClick: (photo: PhotoItem, extras: FragmentNavigator.Extras) -> Unit,
+    fun bind(photo: PhotoItem?, onItemClick: (PhotoItem, FragmentNavigator.Extras) -> Unit) =
+        if (photo != null) {
+            setPhotoItem(photo, onItemClick)
+        } else {
+            setPhotoItemPlaceholder()
+        }
+
+    private fun setPhotoItem(
+        photo: PhotoItem,
+        onItemClick: (PhotoItem, FragmentNavigator.Extras) -> Unit
     ) =
         with(binding) {
-            if (photo != null) {
-                setPhotoItem(photo)
-                root.setOnClickListener {
-                    onItemClick(
-                        photo,
-                        AnimationUtils.getTransitionExtras(ivPhotoCard, ivUserIcon, photo.id)
-                    )
-                }
-            } else {
-                setPhotoItemPlaceholder()
-                root.setOnClickListener(null)
+            setTransitionAnimation(photo)
+            tvUserName.text = photo.user
+            tvPhotoTag.text = photo.tags
+            tvPhotoDownloads.text = photo.downloads
+            tvPhotoLikeCount.text = photo.likes
+            ivUserIcon.loadFromUrl(photo.userImageURL, R.drawable.placeholder_avatar)
+            ivPhotoCard.loadFromUrl(photo.largeImageURL, R.drawable.placeholder_main_image)
+            ivIconPhotoLike.setOnClickListener(null)
+            ivIconDownload.setOnClickListener(null)
+            root.setOnClickListener {
+                onItemClick(
+                    photo,
+                    AnimationUtils.getTransitionExtras(ivPhotoCard, ivUserIcon, photo.id)
+                )
             }
         }
 
-    private fun ItemPhotoBinding.setPhotoItem(photo: PhotoItem) {
+    private fun setPhotoItemPlaceholder() =
+        with(binding) {
+            tvUserName.text = ""
+            tvPhotoTag.text = ""
+            tvPhotoDownloads.text = ""
+            tvPhotoLikeCount.text = ""
+            ivUserIcon.setImageResource(R.drawable.placeholder_avatar)
+            ivPhotoCard.setImageResource(R.drawable.placeholder_main_image)
+            root.setOnClickListener(null)
+        }
+
+    private fun setTransitionAnimation(photo: PhotoItem) {
         ViewCompat.setTransitionName(
-            ivPhotoCard,
+            binding.ivPhotoCard,
             AnimationUtils.getUniqueTransitionLargePhoto(photo.id)
         )
         ViewCompat.setTransitionName(
-            ivUserIcon,
+            binding.ivUserIcon,
             AnimationUtils.getUniqueTransitionUserPhoto(photo.id)
         )
-        tvUserName.text = photo.user
-        tvPhotoTag.text = photo.tags
-        tvPhotoDownloads.text = photo.downloads
-        tvPhotoLikeCount.text = photo.likes
-        ivUserIcon.loadFromUrl(photo.userImageURL, R.drawable.placeholder_avatar)
-        ivPhotoCard.loadFromUrl(
-            photo.largeImageURL,
-            R.drawable.placeholder_main_image
-        )
-    }
-
-    private fun ItemPhotoBinding.setPhotoItemPlaceholder() {
-        tvUserName.text = ""
-        tvPhotoTag.text = ""
-        tvPhotoDownloads.text = ""
-        tvPhotoLikeCount.text = ""
-        ivUserIcon.setImageResource(R.drawable.placeholder_avatar)
-        ivPhotoCard.setImageResource(R.drawable.placeholder_main_image)
     }
 }

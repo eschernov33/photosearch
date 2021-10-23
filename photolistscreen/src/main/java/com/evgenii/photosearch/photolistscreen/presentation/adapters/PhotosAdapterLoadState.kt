@@ -23,5 +23,4 @@ class PhotosAdapterLoadState : LoadStateAdapter<PhotosListLoaderStateViewHolder>
                 false
             )
         )
-
 }

@@ -1,5 +1,4 @@
 <resources>
-
     <style name="RoundedImageViewRounded" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>

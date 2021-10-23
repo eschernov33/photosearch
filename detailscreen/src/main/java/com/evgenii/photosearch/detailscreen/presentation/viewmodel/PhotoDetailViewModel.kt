@@ -24,40 +24,40 @@ internal class PhotoDetailViewModel @Inject constructor(
     private var _photoDetail: MutableLiveData<PhotoDetailItem> = MutableLiveData()
     val photoDetail: LiveData<PhotoDetailItem> = _photoDetail
 
-    private var _loadingProgressVisibility: MutableLiveData<Boolean> = MutableLiveData()
-    val loadingProgressVisibility: LiveData<Boolean> = _loadingProgressVisibility
+    private var _isPhotoLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val isPhotoLoading: LiveData<Boolean> = _isPhotoLoading
 
-    private val _actionShowToastError: MutableLiveData<Event<Unit>> = MutableLiveData()
-    val actionShowToastError: LiveData<Event<Unit>> = _actionShowToastError
+    private val _eventShowToastError: MutableLiveData<Event<Unit>> = MutableLiveData()
+    val eventShowToastError: LiveData<Event<Unit>> = _eventShowToastError
 
-    private val _actionToBackScreen: MutableLiveData<Event<Unit>> = MutableLiveData()
-    val actionToBackScreen: LiveData<Event<Unit>> = _actionToBackScreen
+    private val _eventToBackScreen: MutableLiveData<Event<Unit>> = MutableLiveData()
+    val eventToBackScreen: LiveData<Event<Unit>> = _eventToBackScreen
 
-    private val _actionOpenInBrowser: MutableLiveData<Event<String>> = MutableLiveData()
-    val actionOpenInBrowser: LiveData<Event<String>> = _actionOpenInBrowser
+    private val _eventOpenInBrowser: MutableLiveData<Event<String>> = MutableLiveData()
+    val eventOpenInBrowser: LiveData<Event<String>> = _eventOpenInBrowser
 
     private var dispose: Disposable? = null
 
     private val successLoad: (photoList: List<PhotoDetail>) -> Unit = { photoList ->
         if (photoList.isNotEmpty()) {
-            _loadingProgressVisibility.value = false
+            _isPhotoLoading.value = false
             val photoDetailItem = mapper.mapPhotoToPhotoDetailItem(photoList.first())
             _photoDetail.value = photoDetailItem
         } else {
-            _actionShowToastError.value = Event(Unit)
-            _actionToBackScreen.value = Event(Unit)
+            _eventShowToastError.value = Event(Unit)
+            _eventToBackScreen.value = Event(Unit)
         }
     }
 
     private val errorLoad: (throwable: Throwable) -> Unit = { throwable ->
         Timber.e(throwable)
-        _actionShowToastError.value = Event(Unit)
-        _actionToBackScreen.value = Event(Unit)
+        _eventShowToastError.value = Event(Unit)
+        _eventToBackScreen.value = Event(Unit)
     }
 
     fun loadDetailInfo(photoId: Int) {
         if (photoDetail.value == null) {
-            _loadingProgressVisibility.value = true
+            _isPhotoLoading.value = true
             dispose = getPhotoByIdUseCase(photoId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -67,7 +67,11 @@ internal class PhotoDetailViewModel @Inject constructor(
 
     fun onOpenInBrowserClick() {
         _photoDetail.value?.let { photoDetailItem ->
-            _actionOpenInBrowser.value = Event(photoDetailItem.pageURL)
+            _eventOpenInBrowser.value = Event(photoDetailItem.pageURL)
         }
+    }
+
+    fun onBackButtonPressed() {
+        _eventToBackScreen.value = Event(Unit)
     }
 }

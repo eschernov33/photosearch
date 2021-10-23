@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/viewSurface"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvPhotoInformation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/title_information"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/viewSurface"
+        app:layout_constraintTop_toTopOf="@id/viewSurface" />
+
+    <TextView
+        android:id="@+id/tvIconPhotoViews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/title_views"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintStart_toStartOf="@id/viewSurface"
+        app:layout_constraintTop_toBottomOf="@id/tvPhotoInformation" />
+
+    <TextView
+        android:id="@+id/tvPhotoViews"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintBottom_toBottomOf="@id/tvIconPhotoViews"
+        app:layout_constraintStart_toEndOf="@id/tvIconPhotoViews"
+        app:layout_constraintTop_toTopOf="@id/tvIconPhotoViews"
+        tools:text="100000" />
+
+    <TextView
+        android:id="@+id/tvIconPhotoDownloads"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/ic_download"
+        android:text="@string/title_loads"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintStart_toStartOf="@id/viewSurface"
+        app:layout_constraintTop_toBottomOf="@id/tvIconPhotoViews" />
+
+    <TextView
+        android:id="@+id/tvPhotoDownloads"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintBottom_toBottomOf="@id/tvIconPhotoDownloads"
+        app:layout_constraintStart_toEndOf="@id/tvIconPhotoDownloads"
+        app:layout_constraintTop_toTopOf="@id/tvIconPhotoDownloads"
+        tools:text="54000" />
+
+    <TextView
+        android:id="@+id/tvIconPhotoLikes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/title_likes"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintStart_toStartOf="@id/viewSurface"
+        app:layout_constraintTop_toBottomOf="@id/tvIconPhotoDownloads" />
+
+    <TextView
+        android:id="@+id/tvPhotoLikes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintBottom_toBottomOf="@id/tvIconPhotoLikes"
+        app:layout_constraintStart_toEndOf="@id/tvIconPhotoLikes"
+        app:layout_constraintTop_toTopOf="@id/tvIconPhotoLikes"
+        tools:text="54000" />
+
+    <TextView
+        android:id="@+id/tvIconPhotoComments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/title_comments"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintStart_toStartOf="@id/viewSurface"
+        app:layout_constraintTop_toBottomOf="@id/tvIconPhotoLikes" />
+
+    <TextView
+        android:id="@+id/tvPhotoComments"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintBottom_toBottomOf="@id/tvIconPhotoComments"
+        app:layout_constraintStart_toEndOf="@id/tvIconPhotoComments"
+        app:layout_constraintTop_toTopOf="@id/tvIconPhotoComments"
+        tools:text="54000" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

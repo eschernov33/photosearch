@@ -10,23 +10,25 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.RESULT_UNCHANGED_SHOWN
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
+import com.evgenii.photosearch.core.presentation.fragments.BaseFragment
 import com.evgenii.photosearch.photolistscreen.R
 import com.evgenii.photosearch.photolistscreen.databinding.PhotosListFragmentBinding
 import com.evgenii.photosearch.photolistscreen.presentation.adapters.PhotosAdapter
 import com.evgenii.photosearch.photolistscreen.presentation.adapters.PhotosAdapterLoadState
-import com.evgenii.photosearch.photolistscreen.presentation.model.ErrorMessage
+import com.evgenii.photosearch.photolistscreen.presentation.model.ErrorType
 import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
 import com.evgenii.photosearch.photolistscreen.presentation.viewmodel.PhotoListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class PhotoListFragment : Fragment() {
+class PhotoListFragment : BaseFragment() {
 
     private val viewModel: PhotoListViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
@@ -36,9 +38,7 @@ class PhotoListFragment : Fragment() {
     private val binding: PhotosListFragmentBinding
         get() = _binding ?: throw RuntimeException("PhotosListFragmentBinding is null")
 
-    private var _adapter: PhotosAdapter? = PhotosAdapter { photoItem, extras ->
-        onItemClick(extras, photoItem)
-    }
+    private var _adapter: PhotosAdapter? = null
     private val adapter: PhotosAdapter
         get() = _adapter ?: throw RuntimeException("Photos adapter is null")
 
@@ -57,62 +57,35 @@ class PhotoListFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = PhotosListFragmentBinding.inflate(inflater)
+        _adapter = PhotosAdapter { photoItem, extras ->
+            onItemClick(extras, photoItem)
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setAnimSharedTransition()
+        setAnimationSharedTransition()
         initObservers()
         initPhotoListAdapter()
         setEditTextListener()
         setRetryButtonListener()
     }
 
-    private fun setAnimSharedTransition() {
+    private fun setAnimationSharedTransition() {
         postponeEnterTransition()
-        binding.areaPhotoList.rvPhotoList.viewTreeObserver.addOnPreDrawListener(preDrawListener)
+        binding.photoListBlock.rvPhotoList.viewTreeObserver.addOnPreDrawListener(preDrawListener)
     }
 
-    private fun initObservers() =
-        with(viewModel) {
-            photoListViewsVisibility.observe(viewLifecycleOwner) { photoListAreaParam ->
-                with(binding.areaPhotoList) {
-                    root.isVisible = photoListAreaParam.areaVisible
-                    rvPhotoList.isVisible = photoListAreaParam.listVisible
-                    progressBarLoadPhotos.isVisible =
-                        photoListAreaParam.progressPhotoLoadVisible
-                    tvSearchErrorMessage.isVisible =
-                        photoListAreaParam.errorMessageVisible
-                    btnRetrySearch.isVisible = photoListAreaParam.btnRetryVisible
-                }
-            }
-            photoList.observe(viewLifecycleOwner) { pagingData ->
-                adapter.submitData(lifecycle, pagingData)
-            }
-            errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-                when (errorMessage.type) {
-                    ErrorMessage.Type.NOT_FOUND -> {
-                        binding.areaPhotoList.tvSearchErrorMessage.text =
-                            getString(R.string.error_empty_result)
-                    }
-                    ErrorMessage.Type.NETWORK -> {
-                        binding.areaPhotoList.tvSearchErrorMessage.text =
-                            getString(R.string.error_load_description)
-                    }
-                }
-
-            }
-            actionShowDetails.observe(viewLifecycleOwner) { event ->
-                event.getValue()?.let(this@PhotoListFragment::navigateToDetailScreen)
-            }
-            actionHideKeyboard.observe(viewLifecycleOwner) { event ->
-                event.getValue()?.let { hideSoftKeyboard() }
-            }
-        }
+    private fun initObservers() {
+        initPhotoListViewsVisibilityObserver()
+        initPhotoListObserver()
+        initErrorMessageObserver()
+        initEventsObserver()
+    }
 
     private fun initPhotoListAdapter() {
-        binding.areaPhotoList.rvPhotoList.adapter =
+        binding.photoListBlock.rvPhotoList.adapter =
             adapter.withLoadStateFooter(PhotosAdapterLoadState())
         adapter.addLoadStateListener(loadStateListener)
     }
@@ -121,20 +94,56 @@ class PhotoListFragment : Fragment() {
         binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 viewModel.searchPhotos(binding.etSearch.text.toString())
-                viewModel.photoList.observe(viewLifecycleOwner) { pagingData ->
-                    adapter.submitData(lifecycle, pagingData)
-                }
                 true
             } else
                 false
         }
 
     private fun setRetryButtonListener() {
-        binding.areaPhotoList.btnRetrySearch.setOnClickListener {
+        binding.photoListBlock.btnRetrySearch.setOnClickListener {
             viewModel.onRetryClick(binding.etSearch.text.toString())
-            viewModel.photoList.observe(viewLifecycleOwner) { pagingData ->
-                adapter.submitData(lifecycle, pagingData)
+        }
+    }
+
+    private fun initPhotoListViewsVisibilityObserver() {
+        viewModel.photoListViewsVisibility.observe(viewLifecycleOwner) { photoListBlockParam ->
+            with(binding.photoListBlock) {
+                root.isVisible = photoListBlockParam.areaVisible
+                rvPhotoList.isVisible = photoListBlockParam.listVisible
+                progressBarLoadPhotos.isVisible = photoListBlockParam.progressPhotoLoadVisible
+                tvSearchErrorMessage.isVisible = photoListBlockParam.errorMessageVisible
+                btnRetrySearch.isVisible = photoListBlockParam.btnRetryVisible
             }
+        }
+    }
+
+    private fun initPhotoListObserver() {
+        viewModel.photoList.observe(viewLifecycleOwner) { pagingData ->
+            adapter.submitData(lifecycle, pagingData)
+        }
+    }
+
+    private fun initErrorMessageObserver() {
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            when (errorMessage) {
+                ErrorType.NOT_FOUND -> {
+                    binding.photoListBlock.tvSearchErrorMessage.text =
+                        getString(R.string.error_empty_result)
+                }
+                else -> {
+                    binding.photoListBlock.tvSearchErrorMessage.text =
+                        getString(R.string.error_load_description)
+                }
+            }
+        }
+    }
+
+    private fun initEventsObserver() {
+        viewModel.eventShowDetails.observe(viewLifecycleOwner) { event ->
+            event.getValue()?.let(::navigateToDetailScreen)
+        }
+        viewModel.eventHideKeyboard.observe(viewLifecycleOwner) { event ->
+            event.getValue()?.let { hideSoftKeyboard() }
         }
     }
 
@@ -148,8 +157,13 @@ class PhotoListFragment : Fragment() {
 
     private fun navigateToDetailScreen(photoItem: PhotoItem) {
         transitionExtras?.let { extras ->
-            val uri =
-                Uri.parse("app://photoDetailFragment/?photoId=${photoItem.id}&largeImageUrl=${photoItem.largeImageURL}")
+            val uri = Uri.parse(
+                getString(
+                    R.string.deeplink_detail_screen,
+                    photoItem.id,
+                    photoItem.largeImageURL
+                )
+            )
             navController.navigate(
                 uri, null, extras
             )
@@ -170,7 +184,7 @@ class PhotoListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.areaPhotoList.rvPhotoList.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
+        binding.photoListBlock.rvPhotoList.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
         adapter.removeLoadStateListener { loadStateListener }
         _adapter = null
         _binding = null
