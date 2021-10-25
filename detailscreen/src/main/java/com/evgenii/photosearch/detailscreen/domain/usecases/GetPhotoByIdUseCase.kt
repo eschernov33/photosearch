@@ -9,5 +9,5 @@ internal class GetPhotoByIdUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(photoId: Int): PhotoDetail? =
-        photoSearchRepository.getPhotoById(photoId)?.first()
+        photoSearchRepository.getPhotoById(photoId)?.firstOrNull()
 }

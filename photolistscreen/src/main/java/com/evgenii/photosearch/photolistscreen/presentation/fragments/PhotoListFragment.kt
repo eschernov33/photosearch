@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
+import androidx.paging.PagingData
 import com.evgenii.photosearch.core.presentation.fragments.BaseFragment
 import com.evgenii.photosearch.photolistscreen.R
 import com.evgenii.photosearch.photolistscreen.databinding.PhotosListFragmentBinding
@@ -25,11 +26,9 @@ import com.evgenii.photosearch.photolistscreen.presentation.model.ErrorType
 import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
 import com.evgenii.photosearch.photolistscreen.presentation.viewmodel.PhotoListViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class PhotoListFragment : BaseFragment() {
 
@@ -102,13 +101,12 @@ class PhotoListFragment : BaseFragment() {
                 false
         }
 
-    private fun setRetryButtonListener() {
+    private fun setRetryButtonListener() =
         binding.photoListBlock.btnRetrySearch.setOnClickListener {
             viewModel.onRetryClick(binding.etSearch.text.toString())
         }
-    }
 
-    private fun initPhotoListViewsVisibilityObserver() {
+    private fun initPhotoListViewsVisibilityObserver() =
         viewModel.photoListViewsVisibility.observe(viewLifecycleOwner) { photoListBlockParam ->
             with(binding.photoListBlock) {
                 root.isVisible = photoListBlockParam.areaVisible
@@ -118,15 +116,16 @@ class PhotoListFragment : BaseFragment() {
                 btnRetrySearch.isVisible = photoListBlockParam.btnRetryVisible
             }
         }
-    }
 
-    private fun initPhotoListObserver() {
-        lifecycleScope.launch {
-            viewModel.photoListFlow.collectLatest {
-                adapter.submitData(it)
+    private fun initPhotoListObserver() =
+        viewModel.photoListUpdate.observe(viewLifecycleOwner) {
+            adapter.submitData(lifecycle, PagingData.empty())
+            lifecycleScope.launch {
+                viewModel.photoListFlow?.collectLatest {
+                    adapter.submitData(it)
+                }
             }
         }
-    }
 
     private fun initErrorMessageObserver() {
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
@@ -160,7 +159,7 @@ class PhotoListFragment : BaseFragment() {
         viewModel.onPhotoDetails(photoItem)
     }
 
-    private fun navigateToDetailScreen(photoItem: PhotoItem) {
+    private fun navigateToDetailScreen(photoItem: PhotoItem) =
         transitionExtras?.let { extras ->
             val uri = Uri.parse(
                 getString(
@@ -173,7 +172,6 @@ class PhotoListFragment : BaseFragment() {
                 uri, null, extras
             )
         }
-    }
 
     private fun hideSoftKeyboard() {
         val inputMethodManager: InputMethodManager = requireContext().getSystemService(

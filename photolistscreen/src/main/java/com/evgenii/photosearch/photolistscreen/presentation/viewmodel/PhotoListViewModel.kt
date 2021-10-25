@@ -5,14 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.evgenii.photosearch.core.data.api.PhotosApi
-import com.evgenii.photosearch.core.data.source.PhotoListPageSource
 import com.evgenii.photosearch.core.presentation.model.Event
+import com.evgenii.photosearch.photolistscreen.domain.usecases.GetPhotoListUseCase
 import com.evgenii.photosearch.photolistscreen.presentation.mapper.PhotoItemMapper
 import com.evgenii.photosearch.photolistscreen.presentation.model.ErrorType
 import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
 import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoListViewsVisibility
-import com.evgenii.photosearch.photolistscreen.presentation.model.UserSearch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -21,34 +19,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PhotoListViewModel @Inject constructor(
-    private val api: PhotosApi,
-    private val mapper: PhotoItemMapper
+    private val mapper: PhotoItemMapper,
+    private val getPhotoListUseCase: GetPhotoListUseCase
 ) : ViewModel() {
 
-    private var userSearch: UserSearch = UserSearch()
+    private var _photoListFlow: Flow<PagingData<PhotoItem>>? = null
+    val photoListFlow: Flow<PagingData<PhotoItem>>?
+        get() = _photoListFlow
 
-    private var _pagingSource: PhotoListPageSource? = null
-        get() {
-            if (field == null || field?.invalid == true) {
-                _pagingSource = PhotoListPageSource(api, userSearch.query)
-            }
-            return field
-        }
-    private val pagingSource: PhotoListPageSource
-        get() = _pagingSource ?: throw RuntimeException("Paging source is null")
+    private var _photoListUpdate = MutableLiveData<Unit>()
+    val photoListUpdate: LiveData<Unit> = _photoListUpdate
 
-    val photoListFlow: Flow<PagingData<PhotoItem>> = Pager(pagingConfig) {
-        pagingSource
-    }.flow
-        .cachedIn(viewModelScope).map { pagingData ->
-            pagingData.map { photo ->
-                mapper.mapPhotoToPhotoItem(photo)
-            }
-        }
-
-    private var _photoListAreaViewVisibility = MutableLiveData<PhotoListViewsVisibility>()
+    private var _photoListViewsVisibility = MutableLiveData<PhotoListViewsVisibility>()
     val photoListViewsVisibility: LiveData<PhotoListViewsVisibility> =
-        _photoListAreaViewVisibility
+        _photoListViewsVisibility
 
     private var _errorType = MutableLiveData<ErrorType>()
     val errorMessage: LiveData<ErrorType> = _errorType
@@ -64,23 +48,26 @@ class PhotoListViewModel @Inject constructor(
     }
 
     fun searchPhotos(query: String) {
-        userSearch.query = query
-        _pagingSource?.invalidate()
-        updatePhotoListAreaViewVisibility(listVisible = true, progressPhotoLoadVisible = true)
+        _photoListFlow = getPhotoListUseCase(query)
+            .cachedIn(viewModelScope).map { pagingData ->
+                pagingData.map { photo ->
+                    mapper.mapPhotoToPhotoItem(photo)
+                }
+            }
+        _photoListUpdate.value = Unit
         _eventHideKeyboard.value = Event(Unit)
+        updatePhotoListAreaViewVisibility(listVisible = true, progressPhotoLoadVisible = true)
     }
 
     fun onLoadStateListener(loadState: CombinedLoadStates, itemCount: Int) {
-        if (!userSearch.isAlreadySearch) return
-
         val refreshState = loadState.refresh
-        if (refreshState is LoadState.Error) {
+        if (refreshState.isLoadError()) {
             _errorType.value = ErrorType.NETWORK
             updatePhotoListAreaViewVisibility(errorMessageVisible = true, btnRetryVisible = true)
-            Timber.d(refreshState.error.localizedMessage)
-        } else if (loadState.refresh !is LoadState.Loading) {
+            Timber.d((refreshState as LoadState.Error).error.localizedMessage)
+        } else if (refreshState.isNotLoading()) {
             if (loadState.source.refresh is LoadState.NotLoading &&
-                loadState.append.endOfPaginationReached && itemCount < 1
+                loadState.append.endOfPaginationReached && itemCount == 0
             ) {
                 updatePhotoListAreaViewVisibility(errorMessageVisible = true)
                 _errorType.value = ErrorType.NOT_FOUND
@@ -94,9 +81,14 @@ class PhotoListViewModel @Inject constructor(
         _eventShowDetails.value = Event(photoItem)
     }
 
-    fun onRetryClick(query: String) {
+    fun onRetryClick(query: String) =
         searchPhotos(query)
-    }
+
+    private fun LoadState.isLoadError(): Boolean =
+        this is LoadState.Error
+
+    private fun LoadState.isNotLoading(): Boolean =
+        this !is LoadState.Loading
 
     private fun updatePhotoListAreaViewVisibility(
         listVisible: Boolean = false,
@@ -104,27 +96,11 @@ class PhotoListViewModel @Inject constructor(
         errorMessageVisible: Boolean = false,
         btnRetryVisible: Boolean = false
     ) {
-        _photoListAreaViewVisibility.value = PhotoListViewsVisibility(
+        _photoListViewsVisibility.value = PhotoListViewsVisibility(
             listVisible = listVisible,
             progressPhotoLoadVisible = progressPhotoLoadVisible,
             errorMessageVisible = errorMessageVisible,
             btnRetryVisible = btnRetryVisible
-        )
-    }
-
-    companion object {
-        private const val PAGE_SIZE = 20
-        private const val PREFETCH_DISTANCE = 1
-        private const val ENABLE_PLACEHOLDER = true
-        private const val INITIAL_LOAD_SIZE = 20
-        private const val MAX_SIZE = 200
-
-        private val pagingConfig = PagingConfig(
-            pageSize = PAGE_SIZE,
-            prefetchDistance = PREFETCH_DISTANCE,
-            enablePlaceholders = ENABLE_PLACEHOLDER,
-            initialLoadSize = INITIAL_LOAD_SIZE,
-            maxSize = MAX_SIZE
         )
     }
 }

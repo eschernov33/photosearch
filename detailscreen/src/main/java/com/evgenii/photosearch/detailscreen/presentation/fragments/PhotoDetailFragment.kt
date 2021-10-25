@@ -103,13 +103,12 @@ class PhotoDetailFragment : BaseFragment() {
         }
     }
 
-    private fun photoLoadingObserve() {
+    private fun photoLoadingObserve() =
         viewModel.isPhotoLoading.observe(viewLifecycleOwner) { visibility ->
             binding.pbLoadDetailInfo.isVisible = visibility
         }
-    }
 
-    private fun eventsObserve() {
+    private fun eventsObserve() =
         with(viewModel) {
             eventShowToastError.observe(viewLifecycleOwner) {
                 showToast(getString(R.string.error_load_detail))
@@ -121,7 +120,6 @@ class PhotoDetailFragment : BaseFragment() {
                 event.getValue()?.let { url -> openInBrowser(url) }
             }
         }
-    }
 
     private fun setButtonListener() =
         binding.btnOpenInBrowser.setOnClickListener {

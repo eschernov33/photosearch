@@ -34,26 +34,26 @@ internal class PhotoDetailViewModel @Inject constructor(
     val eventOpenInBrowser: LiveData<Event<String>> = _eventOpenInBrowser
 
     fun loadDetailInfo(photoId: Int) {
-        if (photoDetail.value == null) {
-            _isPhotoLoading.value = true
-            viewModelScope.launch {
-                val photoDetail = getPhotoByIdUseCase(photoId)
-                if (photoDetail == null) {
-                    _eventShowToastError.value = Event(Unit)
-                    _eventToBackScreen.value = Event(Unit)
-                } else {
-                    _isPhotoLoading.value = false
-                    _photoDetail.value = mapper.mapPhotoToPhotoDetailItem(photoDetail)
-                }
+        if (photoDetail.value != null)
+            return
+
+        _isPhotoLoading.value = true
+        viewModelScope.launch {
+            val photoDetail = getPhotoByIdUseCase(photoId)
+            if (photoDetail == null) {
+                _eventShowToastError.value = Event(Unit)
+                _eventToBackScreen.value = Event(Unit)
+            } else {
+                _isPhotoLoading.value = false
+                _photoDetail.value = mapper.mapPhotoToPhotoDetailItem(photoDetail)
             }
         }
     }
 
-    fun onOpenInBrowserClick() {
+    fun onOpenInBrowserClick() =
         _photoDetail.value?.let { photoDetailItem ->
             _eventOpenInBrowser.value = Event(photoDetailItem.pageURL)
         }
-    }
 
     fun onBackButtonPressed() {
         _eventToBackScreen.value = Event(Unit)
