@@ -49,8 +49,8 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation"
     implementation "com.squareup.picasso:picasso:$picasso"
-    implementation "io.reactivex.rxjava2:rxkotlin:$rx_ktx"
-    implementation "io.reactivex.rxjava2:rxandroid:$rx_android"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit"
     implementation "com.jakewharton.timber:timber:$timber"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 

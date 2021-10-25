@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.RESULT_UNCHANGED_SHOWN
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
@@ -25,6 +26,8 @@ import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
 import com.evgenii.photosearch.photolistscreen.presentation.viewmodel.PhotoListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -118,8 +121,10 @@ class PhotoListFragment : BaseFragment() {
     }
 
     private fun initPhotoListObserver() {
-        viewModel.photoList.observe(viewLifecycleOwner) { pagingData ->
-            adapter.submitData(lifecycle, pagingData)
+        lifecycleScope.launch {
+            viewModel.photoListFlow.collectLatest {
+                adapter.submitData(it)
+            }
         }
     }
 

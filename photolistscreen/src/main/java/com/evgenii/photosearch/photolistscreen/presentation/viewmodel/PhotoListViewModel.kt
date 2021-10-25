@@ -4,33 +4,47 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.CombinedLoadStates
-import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.map
-import androidx.paging.rxjava2.cachedIn
-import androidx.paging.rxjava2.observable
+import androidx.paging.*
+import com.evgenii.photosearch.core.data.api.PhotosApi
+import com.evgenii.photosearch.core.data.source.PhotoListPageSource
 import com.evgenii.photosearch.core.presentation.model.Event
-import com.evgenii.photosearch.photolistscreen.domain.usecases.GetPhotoListUseCase
 import com.evgenii.photosearch.photolistscreen.presentation.mapper.PhotoItemMapper
 import com.evgenii.photosearch.photolistscreen.presentation.model.ErrorType
 import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
 import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoListViewsVisibility
+import com.evgenii.photosearch.photolistscreen.presentation.model.UserSearch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class PhotoListViewModel @Inject constructor(
-    private val getPhotoListUseCase: GetPhotoListUseCase,
+    private val api: PhotosApi,
     private val mapper: PhotoItemMapper
 ) : ViewModel() {
 
-    private var _photoList = MutableLiveData<PagingData<PhotoItem>>()
-    val photoList: LiveData<PagingData<PhotoItem>>
-        get() = _photoList
+    private var userSearch: UserSearch = UserSearch()
+
+    private var _pagingSource: PhotoListPageSource? = null
+        get() {
+            if (field == null || field?.invalid == true) {
+                _pagingSource = PhotoListPageSource(api, userSearch.query)
+            }
+            return field
+        }
+    private val pagingSource: PhotoListPageSource
+        get() = _pagingSource ?: throw RuntimeException("Paging source is null")
+
+    val photoListFlow: Flow<PagingData<PhotoItem>> = Pager(pagingConfig) {
+        pagingSource
+    }.flow
+        .cachedIn(viewModelScope).map { pagingData ->
+            pagingData.map { photo ->
+                mapper.mapPhotoToPhotoItem(photo)
+            }
+        }
 
     private var _photoListAreaViewVisibility = MutableLiveData<PhotoListViewsVisibility>()
     val photoListViewsVisibility: LiveData<PhotoListViewsVisibility> =
@@ -45,30 +59,20 @@ class PhotoListViewModel @Inject constructor(
     private val _eventHideKeyboard: MutableLiveData<Event<Unit>> = MutableLiveData()
     val eventHideKeyboard: LiveData<Event<Unit>> = _eventHideKeyboard
 
-    private var disposable: Disposable? = null
-
     init {
         updatePhotoListAreaViewVisibility()
     }
 
-    @ExperimentalCoroutinesApi
     fun searchPhotos(query: String) {
+        userSearch.query = query
+        _pagingSource?.invalidate()
         updatePhotoListAreaViewVisibility(listVisible = true, progressPhotoLoadVisible = true)
         _eventHideKeyboard.value = Event(Unit)
-        val pager = getPhotoListUseCase(query)
-        disposable = pager.observable
-            .map { pagingData ->
-                pagingData.map { photo ->
-                    mapper.mapPhotoToPhotoItem(photo)
-                }
-            }.cachedIn(viewModelScope).subscribe({ pagingData ->
-                _photoList.value = pagingData
-            }, {
-                Timber.d(it)
-            })
     }
 
     fun onLoadStateListener(loadState: CombinedLoadStates, itemCount: Int) {
+        if (!userSearch.isAlreadySearch) return
+
         val refreshState = loadState.refresh
         if (refreshState is LoadState.Error) {
             _errorType.value = ErrorType.NETWORK
@@ -108,8 +112,19 @@ class PhotoListViewModel @Inject constructor(
         )
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        disposable?.dispose()
+    companion object {
+        private const val PAGE_SIZE = 20
+        private const val PREFETCH_DISTANCE = 1
+        private const val ENABLE_PLACEHOLDER = true
+        private const val INITIAL_LOAD_SIZE = 20
+        private const val MAX_SIZE = 200
+
+        private val pagingConfig = PagingConfig(
+            pageSize = PAGE_SIZE,
+            prefetchDistance = PREFETCH_DISTANCE,
+            enablePlaceholders = ENABLE_PLACEHOLDER,
+            initialLoadSize = INITIAL_LOAD_SIZE,
+            maxSize = MAX_SIZE
+        )
     }
 }

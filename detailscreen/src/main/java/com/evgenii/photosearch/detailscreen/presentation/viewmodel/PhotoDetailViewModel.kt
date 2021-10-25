@@ -3,16 +3,13 @@ package com.evgenii.photosearch.detailscreen.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.evgenii.photosearch.core.domain.model.PhotoDetail
+import androidx.lifecycle.viewModelScope
 import com.evgenii.photosearch.core.presentation.model.Event
 import com.evgenii.photosearch.core.presentation.model.PhotoDetailItem
 import com.evgenii.photosearch.detailscreen.domain.usecases.GetPhotoByIdUseCase
 import com.evgenii.photosearch.detailscreen.presentation.mapper.PhotoItemMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,32 +33,19 @@ internal class PhotoDetailViewModel @Inject constructor(
     private val _eventOpenInBrowser: MutableLiveData<Event<String>> = MutableLiveData()
     val eventOpenInBrowser: LiveData<Event<String>> = _eventOpenInBrowser
 
-    private var dispose: Disposable? = null
-
-    private val successLoad: (photoList: List<PhotoDetail>) -> Unit = { photoList ->
-        if (photoList.isNotEmpty()) {
-            _isPhotoLoading.value = false
-            val photoDetailItem = mapper.mapPhotoToPhotoDetailItem(photoList.first())
-            _photoDetail.value = photoDetailItem
-        } else {
-            _eventShowToastError.value = Event(Unit)
-            _eventToBackScreen.value = Event(Unit)
-        }
-    }
-
-    private val errorLoad: (throwable: Throwable) -> Unit = { throwable ->
-        Timber.e(throwable)
-        _eventShowToastError.value = Event(Unit)
-        _eventToBackScreen.value = Event(Unit)
-    }
-
     fun loadDetailInfo(photoId: Int) {
         if (photoDetail.value == null) {
             _isPhotoLoading.value = true
-            dispose = getPhotoByIdUseCase(photoId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(successLoad, errorLoad)
+            viewModelScope.launch {
+                val photoDetail = getPhotoByIdUseCase(photoId)
+                if (photoDetail == null) {
+                    _eventShowToastError.value = Event(Unit)
+                    _eventToBackScreen.value = Event(Unit)
+                } else {
+                    _isPhotoLoading.value = false
+                    _photoDetail.value = mapper.mapPhotoToPhotoDetailItem(photoDetail)
+                }
+            }
         }
     }
 
