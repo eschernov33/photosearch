@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.evgenii.photosearch.core.data.api.PhotosApi
-import com.evgenii.photosearch.core.data.source.PhotoListPageSource
+import com.evgenii.photosearch.core.data.pagesource.PhotoListPageSource
 import com.evgenii.photosearch.core.domain.model.Photo
 import com.evgenii.photosearch.photolistscreen.domain.repository.PhotoSearchRepository
 import kotlinx.coroutines.flow.Flow

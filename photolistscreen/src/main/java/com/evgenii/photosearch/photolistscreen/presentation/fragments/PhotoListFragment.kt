@@ -128,8 +128,8 @@ class PhotoListFragment : BaseFragment() {
         }
 
     private fun initErrorMessageObserver() {
-        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            when (errorMessage) {
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorType ->
+            when (errorType) {
                 ErrorType.NOT_FOUND -> {
                     binding.photoListBlock.tvSearchErrorMessage.text =
                         getString(R.string.error_empty_result)

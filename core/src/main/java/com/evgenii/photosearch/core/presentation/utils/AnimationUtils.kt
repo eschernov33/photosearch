@@ -18,8 +18,8 @@ class AnimationUtils {
 
         fun getTransitionExtras(viewLargePhoto: View, viewUserImage: View, id: Int):
                 FragmentNavigator.Extras {
-            val transitionLargePhoto = getUniqueTransitionLargePhoto(id)
-            val transitionUserPhoto = getUniqueTransitionUserPhoto(id)
+            val transitionLargePhoto: String = getUniqueTransitionLargePhoto(id)
+            val transitionUserPhoto: String = getUniqueTransitionUserPhoto(id)
             return FragmentNavigatorExtras(
                 viewLargePhoto to transitionLargePhoto,
                 viewUserImage to transitionUserPhoto

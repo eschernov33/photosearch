@@ -1,5 +1,5 @@
 package com.evgenii.photosearch.core.data.model
 
-class HitApiResponse(
-    val hits: List<HitApi>
+class HitResponse(
+    val hits: List<Hit>
 )

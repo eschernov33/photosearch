@@ -110,13 +110,13 @@ class PhotoDetailFragment : BaseFragment() {
 
     private fun eventsObserve() =
         with(viewModel) {
-            eventShowToastError.observe(viewLifecycleOwner) {
+            showToastError.observe(viewLifecycleOwner) {
                 showToast(getString(R.string.error_load_detail))
             }
-            eventToBackScreen.observe(viewLifecycleOwner) {
+            navigateToBackScreen.observe(viewLifecycleOwner) {
                 navController.popBackStack()
             }
-            eventOpenInBrowser.observe(viewLifecycleOwner) { event ->
+            openInBrowser.observe(viewLifecycleOwner) { event ->
                 event.getValue()?.let { url -> openInBrowser(url) }
             }
         }
