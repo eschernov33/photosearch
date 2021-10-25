@@ -6,5 +6,4 @@
 
     <include app:graph="@navigation/navigation_photolist" />
     <include app:graph="@navigation/navigation_detailscreen" />
-
 </navigation>

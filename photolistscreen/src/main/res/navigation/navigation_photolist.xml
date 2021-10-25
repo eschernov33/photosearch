@@ -8,5 +8,4 @@
         android:id="@+id/photoListFragment"
         android:name="com.evgenii.photosearch.photolistscreen.presentation.fragments.PhotoListFragment"
         android:label="PhotosListFragment" />
-
 </navigation>

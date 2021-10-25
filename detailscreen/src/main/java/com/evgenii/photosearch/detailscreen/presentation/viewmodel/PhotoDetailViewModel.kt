@@ -27,14 +27,14 @@ internal class PhotoDetailViewModel @Inject constructor(
     private var _isPhotoLoading: MutableLiveData<Boolean> = MutableLiveData()
     val isPhotoLoading: LiveData<Boolean> = _isPhotoLoading
 
-    private val _eventShowToastError: MutableLiveData<Event<Unit>> = MutableLiveData()
-    val eventShowToastError: LiveData<Event<Unit>> = _eventShowToastError
+    private val _showToastError: MutableLiveData<Event<Unit>> = MutableLiveData()
+    val showToastError: LiveData<Event<Unit>> = _showToastError
 
-    private val _eventToBackScreen: MutableLiveData<Event<Unit>> = MutableLiveData()
-    val eventToBackScreen: LiveData<Event<Unit>> = _eventToBackScreen
+    private val _navigateToBackScreen: MutableLiveData<Event<Unit>> = MutableLiveData()
+    val navigateToBackScreen: LiveData<Event<Unit>> = _navigateToBackScreen
 
-    private val _eventOpenInBrowser: MutableLiveData<Event<String>> = MutableLiveData()
-    val eventOpenInBrowser: LiveData<Event<String>> = _eventOpenInBrowser
+    private val _openInBrowser: MutableLiveData<Event<String>> = MutableLiveData()
+    val openInBrowser: LiveData<Event<String>> = _openInBrowser
 
     private var dispose: Disposable? = null
 
@@ -44,15 +44,15 @@ internal class PhotoDetailViewModel @Inject constructor(
             val photoDetailItem = mapper.mapPhotoToPhotoDetailItem(photoList.first())
             _photoDetail.value = photoDetailItem
         } else {
-            _eventShowToastError.value = Event(Unit)
-            _eventToBackScreen.value = Event(Unit)
+            _showToastError.value = Event(Unit)
+            _navigateToBackScreen.value = Event(Unit)
         }
     }
 
     private val errorLoad: (throwable: Throwable) -> Unit = { throwable ->
         Timber.e(throwable)
-        _eventShowToastError.value = Event(Unit)
-        _eventToBackScreen.value = Event(Unit)
+        _showToastError.value = Event(Unit)
+        _navigateToBackScreen.value = Event(Unit)
     }
 
     fun loadDetailInfo(photoId: Int) {
@@ -65,13 +65,12 @@ internal class PhotoDetailViewModel @Inject constructor(
         }
     }
 
-    fun onOpenInBrowserClick() {
+    fun onOpenInBrowserClick() =
         _photoDetail.value?.let { photoDetailItem ->
-            _eventOpenInBrowser.value = Event(photoDetailItem.pageURL)
+            _openInBrowser.value = Event(photoDetailItem.pageURL)
         }
-    }
 
     fun onBackButtonPressed() {
-        _eventToBackScreen.value = Event(Unit)
+        _navigateToBackScreen.value = Event(Unit)
     }
 }

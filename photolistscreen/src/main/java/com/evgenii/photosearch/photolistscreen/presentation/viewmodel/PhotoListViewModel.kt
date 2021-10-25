@@ -70,11 +70,11 @@ class PhotoListViewModel @Inject constructor(
 
     fun onLoadStateListener(loadState: CombinedLoadStates, itemCount: Int) {
         val refreshState = loadState.refresh
-        if (refreshState is LoadState.Error) {
+        if (refreshState.isLoadError()) {
             _errorType.value = ErrorType.NETWORK
             updatePhotoListAreaViewVisibility(errorMessageVisible = true, btnRetryVisible = true)
-            Timber.d(refreshState.error.localizedMessage)
-        } else if (loadState.refresh !is LoadState.Loading) {
+            Timber.d((refreshState as LoadState.Error).error.localizedMessage)
+        } else if (refreshState.isNotLoading()) {
             if (loadState.source.refresh is LoadState.NotLoading &&
                 loadState.append.endOfPaginationReached && itemCount < 1
             ) {
@@ -90,9 +90,16 @@ class PhotoListViewModel @Inject constructor(
         _eventShowDetails.value = Event(photoItem)
     }
 
+    @ExperimentalCoroutinesApi
     fun onRetryClick(query: String) {
         searchPhotos(query)
     }
+
+    private fun LoadState.isLoadError(): Boolean =
+        this is LoadState.Error
+
+    private fun LoadState.isNotLoading(): Boolean =
+        this !is LoadState.Loading
 
     private fun updatePhotoListAreaViewVisibility(
         listVisible: Boolean = false,

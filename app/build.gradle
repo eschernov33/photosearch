@@ -43,20 +43,11 @@ dependencies {
     implementation project(':core')
     implementation project(':detailscreen')
     implementation project(':photolistscreen')
-    implementation "androidx.core:core-ktx:$core_ktx"
     implementation "androidx.appcompat:appcompat:$app_compat"
     implementation "com.google.android.material:material:$material"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout"
-    implementation "androidx.paging:paging-runtime-ktx:$paging"
-    implementation "androidx.paging:paging-rxjava2-ktx:$paging"
     implementation "androidx.fragment:fragment-ktx:$fragment_ktx"
     implementation "com.google.dagger:hilt-android:$hilt_version"
-    implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
-    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
-    implementation "com.jakewharton.timber:timber:$timber"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 
-    testImplementation "junit:junit:$junit"
-    androidTestImplementation "androidx.test.ext:junit:$junit_android"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
 }

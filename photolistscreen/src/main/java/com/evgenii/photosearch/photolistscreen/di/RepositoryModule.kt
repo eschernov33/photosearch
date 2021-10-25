@@ -2,7 +2,7 @@ package com.evgenii.photosearch.photolistscreen.di
 
 import androidx.paging.PagingConfig
 import com.evgenii.photosearch.core.data.api.PhotosApi
-import com.evgenii.photosearch.core.data.mapper.HitApiMapper
+import com.evgenii.photosearch.core.data.mapper.HitMapper
 import com.evgenii.photosearch.photolistscreen.data.repository.PhotoSearchRepositoryImpl
 import com.evgenii.photosearch.photolistscreen.domain.repository.PhotoSearchRepository
 import dagger.Module
@@ -28,7 +28,7 @@ class RepositoryModule {
     @Singleton
     fun providePhotoSearchListRepository(
         api: PhotosApi,
-        mapper: HitApiMapper,
+        mapper: HitMapper,
         pagingConfig: PagingConfig
     ): PhotoSearchRepository =
         PhotoSearchRepositoryImpl(api, mapper, pagingConfig)

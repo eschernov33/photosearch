@@ -89,39 +89,38 @@ class PhotoDetailFragment : BaseFragment() {
         eventsObserve()
     }
 
-    private fun photoDetailObserve() {
+    private fun photoDetailObserve() =
         viewModel.photoDetail.observe(viewLifecycleOwner) { photoDetailItem ->
             with(photoDetailItem) {
-                binding.ivUserIcon.loadFromUrl(userImageURL, R.drawable.placeholder_avatar)
-                binding.tvUserName.text = user
-                binding.layoutInformation.tvPhotoLikes.text = likes
-                binding.layoutInformation.tvPhotoDownloads.text = downloads
-                binding.tvPhotoTags.text = tags
-                binding.layoutInformation.tvPhotoComments.text = comments
-                binding.layoutInformation.tvPhotoViews.text = views
+                with(binding) {
+                    ivUserIcon.loadFromUrl(userImageURL, R.drawable.placeholder_avatar)
+                    tvUserName.text = user
+                    layoutInformation.tvPhotoLikes.text = likes
+                    layoutInformation.tvPhotoDownloads.text = downloads
+                    tvPhotoTags.text = tags
+                    layoutInformation.tvPhotoComments.text = comments
+                    layoutInformation.tvPhotoViews.text = views
+                }
             }
         }
-    }
 
-    private fun photoLoadingObserve() {
+    private fun photoLoadingObserve() =
         viewModel.isPhotoLoading.observe(viewLifecycleOwner) { visibility ->
             binding.pbLoadDetailInfo.isVisible = visibility
         }
-    }
 
-    private fun eventsObserve() {
+    private fun eventsObserve() =
         with(viewModel) {
-            eventShowToastError.observe(viewLifecycleOwner) {
+            showToastError.observe(viewLifecycleOwner) {
                 showToast(getString(R.string.error_load_detail))
             }
-            eventToBackScreen.observe(viewLifecycleOwner) {
+            navigateToBackScreen.observe(viewLifecycleOwner) {
                 navController.popBackStack()
             }
-            eventOpenInBrowser.observe(viewLifecycleOwner) { event ->
+            openInBrowser.observe(viewLifecycleOwner) { event ->
                 event.getValue()?.let { url -> openInBrowser(url) }
             }
         }
-    }
 
     private fun setButtonListener() =
         binding.btnOpenInBrowser.setOnClickListener {

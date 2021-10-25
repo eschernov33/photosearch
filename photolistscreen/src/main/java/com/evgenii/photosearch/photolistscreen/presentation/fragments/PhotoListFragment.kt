@@ -99,13 +99,12 @@ class PhotoListFragment : BaseFragment() {
                 false
         }
 
-    private fun setRetryButtonListener() {
+    private fun setRetryButtonListener() =
         binding.photoListBlock.btnRetrySearch.setOnClickListener {
             viewModel.onRetryClick(binding.etSearch.text.toString())
         }
-    }
 
-    private fun initPhotoListViewsVisibilityObserver() {
+    private fun initPhotoListViewsVisibilityObserver() =
         viewModel.photoListViewsVisibility.observe(viewLifecycleOwner) { photoListBlockParam ->
             with(binding.photoListBlock) {
                 root.isVisible = photoListBlockParam.areaVisible
@@ -115,17 +114,15 @@ class PhotoListFragment : BaseFragment() {
                 btnRetrySearch.isVisible = photoListBlockParam.btnRetryVisible
             }
         }
-    }
 
-    private fun initPhotoListObserver() {
+    private fun initPhotoListObserver() =
         viewModel.photoList.observe(viewLifecycleOwner) { pagingData ->
             adapter.submitData(lifecycle, pagingData)
         }
-    }
 
-    private fun initErrorMessageObserver() {
-        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            when (errorMessage) {
+    private fun initErrorMessageObserver() =
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorType ->
+            when (errorType) {
                 ErrorType.NOT_FOUND -> {
                     binding.photoListBlock.tvSearchErrorMessage.text =
                         getString(R.string.error_empty_result)
@@ -136,7 +133,6 @@ class PhotoListFragment : BaseFragment() {
                 }
             }
         }
-    }
 
     private fun initEventsObserver() {
         viewModel.eventShowDetails.observe(viewLifecycleOwner) { event ->
@@ -155,7 +151,7 @@ class PhotoListFragment : BaseFragment() {
         viewModel.onPhotoDetails(photoItem)
     }
 
-    private fun navigateToDetailScreen(photoItem: PhotoItem) {
+    private fun navigateToDetailScreen(photoItem: PhotoItem) =
         transitionExtras?.let { extras ->
             val uri = Uri.parse(
                 getString(
@@ -168,7 +164,6 @@ class PhotoListFragment : BaseFragment() {
                 uri, null, extras
             )
         }
-    }
 
     private fun hideSoftKeyboard() {
         val inputMethodManager: InputMethodManager = requireContext().getSystemService(
