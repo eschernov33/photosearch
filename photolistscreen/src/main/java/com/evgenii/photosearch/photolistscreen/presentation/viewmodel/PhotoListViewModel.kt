@@ -8,9 +8,7 @@ import androidx.paging.*
 import com.evgenii.photosearch.core.presentation.model.Event
 import com.evgenii.photosearch.photolistscreen.domain.usecases.GetPhotoListUseCase
 import com.evgenii.photosearch.photolistscreen.presentation.mapper.PhotoItemMapper
-import com.evgenii.photosearch.photolistscreen.presentation.model.ErrorType
-import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
-import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoListViewsVisibility
+import com.evgenii.photosearch.photolistscreen.presentation.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -30,21 +28,14 @@ class PhotoListViewModel @Inject constructor(
     private var _photoListUpdate = MutableLiveData<Unit>()
     val photoListUpdate: LiveData<Unit> = _photoListUpdate
 
-    private var _photoListViewsVisibility = MutableLiveData<PhotoListViewsVisibility>()
-    val photoListViewsVisibility: LiveData<PhotoListViewsVisibility> =
-        _photoListViewsVisibility
+    private val _screenState: MutableLiveData<PhotoListScreenState> = MutableLiveData()
+    val screenState: LiveData<PhotoListScreenState> = _screenState
 
-    private var _errorType = MutableLiveData<ErrorType>()
-    val errorMessage: LiveData<ErrorType> = _errorType
-
-    private val _eventShowDetails: MutableLiveData<Event<PhotoItem>> = MutableLiveData()
-    val eventShowDetails: LiveData<Event<PhotoItem>> = _eventShowDetails
-
-    private val _eventHideKeyboard: MutableLiveData<Event<Unit>> = MutableLiveData()
-    val eventHideKeyboard: LiveData<Event<Unit>> = _eventHideKeyboard
+    private val _commands: MutableLiveData<Event<Commands>> = MutableLiveData()
+    val commands: LiveData<Event<Commands>> = _commands
 
     init {
-        updatePhotoListAreaViewVisibility()
+        _screenState.value = PhotoListScreenState()
     }
 
     fun searchPhotos(query: String) {
@@ -55,30 +46,37 @@ class PhotoListViewModel @Inject constructor(
                 }
             }
         _photoListUpdate.value = Unit
-        _eventHideKeyboard.value = Event(Unit)
-        updatePhotoListAreaViewVisibility(listVisible = true, progressPhotoLoadVisible = true)
+        _commands.value = Event(HideKeyboard)
+        _screenState.value = PhotoListScreenState(
+            photoListVisibility = true,
+            loadingProgressBarVisibility = true
+        )
     }
 
     fun onLoadStateListener(loadState: CombinedLoadStates, itemCount: Int) {
         val refreshState = loadState.refresh
         if (refreshState.isLoadError()) {
-            _errorType.value = ErrorType.NETWORK
-            updatePhotoListAreaViewVisibility(errorMessageVisible = true, btnRetryVisible = true)
+            _screenState.value = PhotoListScreenState(
+                errorTextViewVisibility = true,
+                errorType = ErrorType.NETWORK
+            )
             Timber.d((refreshState as LoadState.Error).error.localizedMessage)
-        } else if (refreshState.isNotLoading()) {
-            if (loadState.source.refresh is LoadState.NotLoading &&
-                loadState.append.endOfPaginationReached && itemCount == 0
-            ) {
-                updatePhotoListAreaViewVisibility(errorMessageVisible = true)
-                _errorType.value = ErrorType.NOT_FOUND
+        } else if (refreshState.isNotLoadingProcess()) {
+            if (loadState.isLoadEmpty(itemCount)) {
+                _screenState.value = PhotoListScreenState(
+                    errorTextViewVisibility = true,
+                    errorType = ErrorType.NOT_FOUND
+                )
             } else if (itemCount > 0) {
-                updatePhotoListAreaViewVisibility(listVisible = true)
+                _screenState.value = PhotoListScreenState(
+                    photoListVisibility = true,
+                )
             }
         }
     }
 
     fun onPhotoDetails(photoItem: PhotoItem) {
-        _eventShowDetails.value = Event(photoItem)
+        _commands.value = Event(ShowDetail(photoItem))
     }
 
     fun onRetryClick(query: String) =
@@ -87,20 +85,10 @@ class PhotoListViewModel @Inject constructor(
     private fun LoadState.isLoadError(): Boolean =
         this is LoadState.Error
 
-    private fun LoadState.isNotLoading(): Boolean =
-        this !is LoadState.Loading
+    private fun CombinedLoadStates.isLoadEmpty(itemCount: Int): Boolean =
+        source.refresh is LoadState.NotLoading &&
+                append.endOfPaginationReached && itemCount == 0
 
-    private fun updatePhotoListAreaViewVisibility(
-        listVisible: Boolean = false,
-        progressPhotoLoadVisible: Boolean = false,
-        errorMessageVisible: Boolean = false,
-        btnRetryVisible: Boolean = false
-    ) {
-        _photoListViewsVisibility.value = PhotoListViewsVisibility(
-            listVisible = listVisible,
-            progressPhotoLoadVisible = progressPhotoLoadVisible,
-            errorMessageVisible = errorMessageVisible,
-            btnRetryVisible = btnRetryVisible
-        )
-    }
+    private fun LoadState.isNotLoadingProcess(): Boolean =
+        this !is LoadState.Loading
 }

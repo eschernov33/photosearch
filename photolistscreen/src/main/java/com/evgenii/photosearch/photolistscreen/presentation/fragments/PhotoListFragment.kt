@@ -22,8 +22,7 @@ import com.evgenii.photosearch.photolistscreen.R
 import com.evgenii.photosearch.photolistscreen.databinding.PhotosListFragmentBinding
 import com.evgenii.photosearch.photolistscreen.presentation.adapters.PhotosAdapter
 import com.evgenii.photosearch.photolistscreen.presentation.adapters.PhotosAdapterLoadState
-import com.evgenii.photosearch.photolistscreen.presentation.model.ErrorType
-import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
+import com.evgenii.photosearch.photolistscreen.presentation.model.*
 import com.evgenii.photosearch.photolistscreen.presentation.viewmodel.PhotoListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -80,10 +79,9 @@ class PhotoListFragment : BaseFragment() {
     }
 
     private fun initObservers() {
-        initPhotoListViewsVisibilityObserver()
+        initPhotoListStateScreenObserver()
         initPhotoListObserver()
-        initErrorMessageObserver()
-        initEventsObserver()
+        initCommandsObserver()
     }
 
     private fun initPhotoListAdapter() {
@@ -97,8 +95,9 @@ class PhotoListFragment : BaseFragment() {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 viewModel.searchPhotos(binding.etSearch.text.toString())
                 true
-            } else
+            } else {
                 false
+            }
         }
 
     private fun setRetryButtonListener() =
@@ -106,14 +105,23 @@ class PhotoListFragment : BaseFragment() {
             viewModel.onRetryClick(binding.etSearch.text.toString())
         }
 
-    private fun initPhotoListViewsVisibilityObserver() =
-        viewModel.photoListViewsVisibility.observe(viewLifecycleOwner) { photoListBlockParam ->
-            with(binding.photoListBlock) {
-                root.isVisible = photoListBlockParam.areaVisible
-                rvPhotoList.isVisible = photoListBlockParam.listVisible
-                progressBarLoadPhotos.isVisible = photoListBlockParam.progressPhotoLoadVisible
-                tvSearchErrorMessage.isVisible = photoListBlockParam.errorMessageVisible
-                btnRetrySearch.isVisible = photoListBlockParam.btnRetryVisible
+    private fun initPhotoListStateScreenObserver() =
+        viewModel.screenState.observe(viewLifecycleOwner) { photoListStateScreen ->
+            with(photoListStateScreen) {
+                with(binding.photoListBlock) {
+                    root.isVisible = contentBlockVisibility
+                    rvPhotoList.isVisible = photoListVisibility
+                    progressBarLoadPhotos.isVisible = loadingProgressBarVisibility
+                    tvSearchErrorMessage.isVisible = errorTextViewVisibility
+                    btnRetrySearch.isVisible = retryButtonVisibility
+                    tvSearchErrorMessage.text =
+                        errorType?.let { errorType ->
+                            when (errorType) {
+                                ErrorType.NETWORK -> getString(R.string.error_load_description)
+                                ErrorType.NOT_FOUND -> getString(R.string.error_empty_result)
+                            }
+                        } ?: EMPTY_STRING
+                }
             }
         }
 
@@ -127,29 +135,13 @@ class PhotoListFragment : BaseFragment() {
             }
         }
 
-    private fun initErrorMessageObserver() {
-        viewModel.errorMessage.observe(viewLifecycleOwner) { errorType ->
-            when (errorType) {
-                ErrorType.NOT_FOUND -> {
-                    binding.photoListBlock.tvSearchErrorMessage.text =
-                        getString(R.string.error_empty_result)
-                }
-                else -> {
-                    binding.photoListBlock.tvSearchErrorMessage.text =
-                        getString(R.string.error_load_description)
-                }
+    private fun initCommandsObserver() =
+        viewModel.commands.observe(viewLifecycleOwner) { commandEvent ->
+            when (val command: Commands? = commandEvent.getValue()) {
+                is HideKeyboard -> hideSoftKeyboard()
+                is ShowDetail -> navigateToDetailScreen(command.photoItem)
             }
         }
-    }
-
-    private fun initEventsObserver() {
-        viewModel.eventShowDetails.observe(viewLifecycleOwner) { event ->
-            event.getValue()?.let(::navigateToDetailScreen)
-        }
-        viewModel.eventHideKeyboard.observe(viewLifecycleOwner) { event ->
-            event.getValue()?.let { hideSoftKeyboard() }
-        }
-    }
 
     private fun onItemClick(
         extras: FragmentNavigator.Extras,
@@ -191,5 +183,9 @@ class PhotoListFragment : BaseFragment() {
         adapter.removeLoadStateListener { loadStateListener }
         _adapter = null
         _binding = null
+    }
+
+    companion object {
+        private const val EMPTY_STRING = ""
     }
 }

@@ -8,6 +8,7 @@ import com.evgenii.photosearch.core.presentation.model.Event
 import com.evgenii.photosearch.core.presentation.model.PhotoDetailItem
 import com.evgenii.photosearch.detailscreen.domain.usecases.GetPhotoByIdUseCase
 import com.evgenii.photosearch.detailscreen.presentation.mapper.PhotoItemMapper
+import com.evgenii.photosearch.detailscreen.presentation.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,30 +22,25 @@ internal class PhotoDetailViewModel @Inject constructor(
     private var _photoDetail: MutableLiveData<PhotoDetailItem> = MutableLiveData()
     val photoDetail: LiveData<PhotoDetailItem> = _photoDetail
 
-    private var _isPhotoLoading: MutableLiveData<Boolean> = MutableLiveData()
-    val isPhotoLoading: LiveData<Boolean> = _isPhotoLoading
+    private var _photoDetailScreenState: MutableLiveData<PhotoDetailScreenState> = MutableLiveData()
+    val photoDetailScreenState: LiveData<PhotoDetailScreenState> = _photoDetailScreenState
 
-    private val _showToastError: MutableLiveData<Event<Unit>> = MutableLiveData()
-    val showToastError: LiveData<Event<Unit>> = _showToastError
-
-    private val _navigateToBackScreen: MutableLiveData<Event<Unit>> = MutableLiveData()
-    val navigateToBackScreen: LiveData<Event<Unit>> = _navigateToBackScreen
-
-    private val _openInBrowser: MutableLiveData<Event<String>> = MutableLiveData()
-    val openInBrowser: LiveData<Event<String>> = _openInBrowser
+    private val _commands: MutableLiveData<Event<Commands>> = MutableLiveData()
+    val commands: LiveData<Event<Commands>> = _commands
 
     fun loadDetailInfo(photoId: Int) {
-        if (photoDetail.value != null)
+        if (photoDetail.value != null) {
             return
-
-        _isPhotoLoading.value = true
+        }
+        _photoDetailScreenState.value = PhotoDetailScreenState(progressBarVisibility = true)
         viewModelScope.launch {
             val photoDetail = getPhotoByIdUseCase(photoId)
             if (photoDetail == null) {
-                _showToastError.value = Event(Unit)
-                _navigateToBackScreen.value = Event(Unit)
+                _commands.value = Event(ShowToast)
+                _commands.value = Event(NavigateToBackScreen)
             } else {
-                _isPhotoLoading.value = false
+                _photoDetailScreenState.value =
+                    PhotoDetailScreenState(progressBarVisibility = false)
                 _photoDetail.value = mapper.mapPhotoToPhotoDetailItem(photoDetail)
             }
         }
@@ -52,10 +48,10 @@ internal class PhotoDetailViewModel @Inject constructor(
 
     fun onOpenInBrowserClick() =
         _photoDetail.value?.let { photoDetailItem ->
-            _openInBrowser.value = Event(photoDetailItem.pageURL)
+            _commands.value = Event(OpenInBrowser(photoDetailItem.pageURL))
         }
 
     fun onBackButtonPressed() {
-        _navigateToBackScreen.value = Event(Unit)
+        _commands.value = Event(NavigateToBackScreen)
     }
 }

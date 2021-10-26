@@ -1,6 +1,6 @@
 package com.evgenii.photosearch.core.domain.model
 
-class Photo(
+open class Photo(
     val id: Int,
     val user: String,
     val userImageURL: String,

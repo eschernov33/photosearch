@@ -18,6 +18,9 @@ import com.evgenii.photosearch.core.presentation.fragments.BaseFragment
 import com.evgenii.photosearch.core.presentation.utils.AnimationUtils
 import com.evgenii.photosearch.core.presentation.utils.PicassoUtils.Companion.loadFromUrl
 import com.evgenii.photosearch.databinding.PhotoDetailFragmentBinding
+import com.evgenii.photosearch.detailscreen.presentation.model.NavigateToBackScreen
+import com.evgenii.photosearch.detailscreen.presentation.model.OpenInBrowser
+import com.evgenii.photosearch.detailscreen.presentation.model.ShowToast
 import com.evgenii.photosearch.detailscreen.presentation.viewmodel.PhotoDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -84,12 +87,12 @@ class PhotoDetailFragment : BaseFragment() {
     }
 
     private fun initObservers() {
-        photoDetailObserve()
-        photoLoadingObserve()
-        eventsObserve()
+        initPhotoDetailInfoObserver()
+        initPhotoDetailScreenStateObserver()
+        initCommandsObserver()
     }
 
-    private fun photoDetailObserve() {
+    private fun initPhotoDetailInfoObserver() =
         viewModel.photoDetail.observe(viewLifecycleOwner) { photoDetailItem ->
             with(photoDetailItem) {
                 binding.ivUserIcon.loadFromUrl(userImageURL, R.drawable.placeholder_avatar)
@@ -101,23 +104,18 @@ class PhotoDetailFragment : BaseFragment() {
                 binding.layoutInformation.tvPhotoViews.text = views
             }
         }
-    }
 
-    private fun photoLoadingObserve() =
-        viewModel.isPhotoLoading.observe(viewLifecycleOwner) { visibility ->
-            binding.pbLoadDetailInfo.isVisible = visibility
+    private fun initPhotoDetailScreenStateObserver() =
+        viewModel.photoDetailScreenState.observe(viewLifecycleOwner) { screenState ->
+            binding.pbLoadDetailInfo.isVisible = screenState.progressBarVisibility
         }
 
-    private fun eventsObserve() =
-        with(viewModel) {
-            showToastError.observe(viewLifecycleOwner) {
-                showToast(getString(R.string.error_load_detail))
-            }
-            navigateToBackScreen.observe(viewLifecycleOwner) {
-                navController.popBackStack()
-            }
-            openInBrowser.observe(viewLifecycleOwner) { event ->
-                event.getValue()?.let { url -> openInBrowser(url) }
+    private fun initCommandsObserver() =
+        viewModel.commands.observe(viewLifecycleOwner) { commands ->
+            when (val command = commands.getValue()) {
+                is NavigateToBackScreen -> navController.popBackStack()
+                is OpenInBrowser -> openInBrowser(command.path)
+                is ShowToast -> showToast(getString(R.string.error_load_detail))
             }
         }
 
