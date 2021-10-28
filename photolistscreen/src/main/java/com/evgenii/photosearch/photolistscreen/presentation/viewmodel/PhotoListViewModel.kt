@@ -2,12 +2,14 @@ package com.evgenii.photosearch.photolistscreen.presentation.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.evgenii.photosearch.core.presentation.model.Event
+import com.evgenii.photosearch.core.presentation.viewmodel.BaseViewModel
 import com.evgenii.photosearch.photolistscreen.R
 import com.evgenii.photosearch.photolistscreen.domain.usecases.PhotoListUseCase
+import com.evgenii.photosearch.photolistscreen.presentation.extensions.isLoadEmpty
+import com.evgenii.photosearch.photolistscreen.presentation.extensions.isLoadError
+import com.evgenii.photosearch.photolistscreen.presentation.extensions.isNotLoadingProcess
 import com.evgenii.photosearch.photolistscreen.presentation.mapper.PhotoItemMapper
 import com.evgenii.photosearch.photolistscreen.presentation.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,9 +22,9 @@ import javax.inject.Inject
 class PhotoListViewModel @Inject constructor(
     private val mapper: PhotoItemMapper,
     private val photoListUseCase: PhotoListUseCase
-) : ViewModel() {
+) : BaseViewModel<PhotoListScreenState, Commands>() {
 
-    private var userQuery: String = EMPTY_QUERY
+    private var userQuery: String = ""
 
     private var _photoListFlow: Flow<PagingData<PhotoItem>>? = null
     val photoListFlow: Flow<PagingData<PhotoItem>>?
@@ -30,13 +32,6 @@ class PhotoListViewModel @Inject constructor(
 
     private var _photoListUpdated = MutableLiveData<Unit>()
     val photoListUpdated: LiveData<Unit> = _photoListUpdated
-
-    private val _screenState: MutableLiveData<PhotoListScreenState> =
-        MutableLiveData(PhotoListScreenState())
-    val screenState: LiveData<PhotoListScreenState> = _screenState
-
-    private val _commands: MutableLiveData<Event<Commands>> = MutableLiveData()
-    val commands: LiveData<Event<Commands>> = _commands
 
     fun onSearchTextChanged(query: String) {
         userQuery = query
@@ -46,7 +41,7 @@ class PhotoListViewModel @Inject constructor(
         searchPhotos()
 
     fun onPhotoItemClick(photoItem: PhotoItem) {
-        _commands.value = Event(ShowDetail(photoItem))
+        executeCommand(ShowDetail(photoItem))
     }
 
     fun onRetryButtonClick() =
@@ -57,22 +52,28 @@ class PhotoListViewModel @Inject constructor(
         if (refreshState.isNotLoadingProcess()) {
             when {
                 refreshState.isLoadError() -> {
-                    _screenState.value = PhotoListScreenState(
-                        isErrorTextVisible = true,
-                        isRetryButtonVisible = true,
-                        errorTextResId = R.string.error_load_description
+                    updateScreen(
+                        PhotoListScreenState(
+                            isErrorTextVisible = true,
+                            isRetryButtonVisible = true,
+                            errorTextResId = R.string.error_load_description
+                        )
                     )
                     Timber.d((refreshState as LoadState.Error).error.localizedMessage)
                 }
                 loadState.isLoadEmpty(itemCount) -> {
-                    _screenState.value = PhotoListScreenState(
-                        isErrorTextVisible = true,
-                        errorTextResId = R.string.error_empty_result
+                    updateScreen(
+                        PhotoListScreenState(
+                            isErrorTextVisible = true,
+                            errorTextResId = R.string.error_empty_result
+                        )
                     )
                 }
                 itemCount > 0 -> {
-                    _screenState.value = PhotoListScreenState(
-                        isPhotoListVisible = true,
+                    updateScreen(
+                        PhotoListScreenState(
+                            isPhotoListVisible = true,
+                        )
                     )
                 }
             }
@@ -87,24 +88,12 @@ class PhotoListViewModel @Inject constructor(
                 }
             }
         _photoListUpdated.value = Unit
-        _commands.value = Event(HideKeyboard)
-        _screenState.value = PhotoListScreenState(
-            isPhotoListVisible = true,
-            isLoadingProgressBarVisible = true
+        executeCommand(HideKeyboard)
+        updateScreen(
+            PhotoListScreenState(
+                isPhotoListVisible = true,
+                isLoadingProgressBarVisible = true
+            )
         )
-    }
-
-    private fun LoadState.isLoadError(): Boolean =
-        this is LoadState.Error
-
-    private fun CombinedLoadStates.isLoadEmpty(itemCount: Int): Boolean =
-        source.refresh is LoadState.NotLoading &&
-                append.endOfPaginationReached && itemCount == 0
-
-    private fun LoadState.isNotLoadingProcess(): Boolean =
-        this !is LoadState.Loading
-
-    companion object {
-        private const val EMPTY_QUERY = ""
     }
 }

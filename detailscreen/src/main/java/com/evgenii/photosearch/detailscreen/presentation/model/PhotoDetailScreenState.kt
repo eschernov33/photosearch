@@ -1,19 +1,16 @@
 package com.evgenii.photosearch.detailscreen.presentation.model
 
+import com.evgenii.photosearch.core.presentation.model.BaseScreenState
+
 class PhotoDetailScreenState(
     val isLoading: Boolean = false,
     val progressBarVisibility: Boolean = false,
-    val userName: String = EMPTY,
-    val likeCount: String = EMPTY,
-    val downloadCount: String = EMPTY,
-    val tags: String = EMPTY,
-    val commentCount: String = EMPTY,
-    val viewsCount: String = EMPTY,
-    val userImageURL: String = EMPTY,
-    val photoPageUrl: String = EMPTY
-) {
-
-    companion object {
-        private const val EMPTY = ""
-    }
-}
+    val userName: String = "",
+    val likeCount: String = "",
+    val downloadCount: String = "",
+    val tags: String = "",
+    val commentCount: String = "",
+    val viewsCount: String = "",
+    val userImageURL: String = "",
+    val photoPageUrl: String = ""
+) : BaseScreenState

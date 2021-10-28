@@ -1,10 +1,7 @@
 package com.evgenii.photosearch.detailscreen.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.evgenii.photosearch.core.presentation.model.Event
+import com.evgenii.photosearch.core.presentation.viewmodel.BaseViewModel
 import com.evgenii.photosearch.detailscreen.domain.usecases.PhotoByIdUseCase
 import com.evgenii.photosearch.detailscreen.presentation.mapper.PhotoItemMapper
 import com.evgenii.photosearch.detailscreen.presentation.model.*
@@ -13,43 +10,38 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class PhotoDetailViewModel @Inject constructor(
+class PhotoDetailViewModel @Inject constructor(
     private val photoByIdUseCase: PhotoByIdUseCase,
     private val mapper: PhotoItemMapper
-) : ViewModel() {
-
-    private var _photoDetailScreenState: MutableLiveData<PhotoDetailScreenState> = MutableLiveData()
-    val photoDetailScreenState: LiveData<PhotoDetailScreenState> = _photoDetailScreenState
-
-    private val _commands: MutableLiveData<Event<Commands>> = MutableLiveData()
-    val commands: LiveData<Event<Commands>> = _commands
+) : BaseViewModel<PhotoDetailScreenState, Commands>() {
 
     fun onInitScreen(photoId: Int) {
-        val screenState = photoDetailScreenState.value
-        if (screenState == null || !screenState.isLoading) {
+        val isDetailAlreadyLoading = screenState.value?.isLoading ?: false
+        if (!isDetailAlreadyLoading) {
             loadPhotoDetailInfo(photoId)
         }
     }
 
-    fun onOpenInBrowserClick() =
-        _photoDetailScreenState.value?.let { photoDetailItem ->
-            _commands.value = Event(OpenInBrowser(photoDetailItem.photoPageUrl))
+    fun onOpenInBrowserClick() {
+        screenState.value?.let { photoDetailItem ->
+            executeCommand(OpenInBrowser(photoDetailItem.photoPageUrl))
         }
+    }
 
     fun onBackButtonPressed() {
-        _commands.value = Event(NavigateToBackScreen)
+        executeCommand(NavigateToBackScreen)
     }
 
     private fun loadPhotoDetailInfo(photoId: Int) {
-        _photoDetailScreenState.value = PhotoDetailScreenState(progressBarVisibility = true)
+        updateScreen(PhotoDetailScreenState(progressBarVisibility = true))
         viewModelScope.launch {
             val photoDetail = photoByIdUseCase.getPhoto(photoId)
             if (photoDetail == null) {
-                _commands.value = Event(ShowToast)
-                _commands.value = Event(NavigateToBackScreen)
+                executeCommand(ShowToast)
+                executeCommand(NavigateToBackScreen)
             } else {
                 val photoDetailItem = mapper.mapPhotoToPhotoDetailItem(photoDetail)
-                _photoDetailScreenState.value =
+                updateScreen(
                     PhotoDetailScreenState(
                         progressBarVisibility = false,
                         userName = photoDetailItem.user,
@@ -61,6 +53,7 @@ internal class PhotoDetailViewModel @Inject constructor(
                         userImageURL = photoDetailItem.userImageURL,
                         photoPageUrl = photoDetailItem.pageURL
                     )
+                )
             }
         }
     }

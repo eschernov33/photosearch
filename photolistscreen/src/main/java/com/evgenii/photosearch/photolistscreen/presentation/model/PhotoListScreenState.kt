@@ -1,6 +1,7 @@
 package com.evgenii.photosearch.photolistscreen.presentation.model
 
 import androidx.annotation.StringRes
+import com.evgenii.photosearch.core.presentation.model.BaseScreenState
 import com.evgenii.photosearch.photolistscreen.R
 
 class PhotoListScreenState(
@@ -10,4 +11,4 @@ class PhotoListScreenState(
     @StringRes val errorTextResId: Int = R.string.empty,
     val isRetryButtonVisible: Boolean = false,
     val isContentBlockVisible: Boolean = isPhotoListVisible || isErrorTextVisible
-)
+) : BaseScreenState

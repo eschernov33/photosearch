@@ -1,17 +1,17 @@
-package com.evgenii.photosearch.core.data.pagesource
+package com.evgenii.photosearch.photolistscreen.data.pagesource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.evgenii.photosearch.core.data.api.PhotosApi
 import com.evgenii.photosearch.core.data.mapper.PhotoApiMapper
 import com.evgenii.photosearch.core.data.model.PhotoApiResponse
 import com.evgenii.photosearch.core.domain.model.Photo
+import com.evgenii.photosearch.photolistscreen.data.api.PhotoListApi
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 
 class PhotoListPageSource(
-    private val api: PhotosApi,
+    private val api: PhotoListApi,
     private val query: String,
     private val mapper: PhotoApiMapper = PhotoApiMapper()
 ) : PagingSource<Int, Photo>() {

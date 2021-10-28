@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/photoListBlock"
+        app:layout_constraintBottom_toTopOf="@id/photoListContent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -51,8 +51,8 @@
     </LinearLayout>
 
     <include
-        android:id="@+id/photoListBlock"
-        layout="@layout/photo_list_block"
+        android:id="@+id/photoListContent"
+        layout="@layout/layout_photo_list_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"

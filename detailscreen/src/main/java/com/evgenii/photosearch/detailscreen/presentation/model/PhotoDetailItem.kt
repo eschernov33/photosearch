@@ -1,4 +1,4 @@
-package com.evgenii.photosearch.core.presentation.model
+package com.evgenii.photosearch.detailscreen.presentation.model
 
 class PhotoDetailItem(
     val id: Int,

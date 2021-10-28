@@ -1,21 +1,15 @@
 package com.evgenii.photosearch.photolistscreen.presentation.fragments
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.view.inputmethod.InputMethodManager.RESULT_UNCHANGED_SHOWN
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigator
-import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
 import com.evgenii.photosearch.core.presentation.fragments.BaseFragment
@@ -23,20 +17,16 @@ import com.evgenii.photosearch.photolistscreen.R
 import com.evgenii.photosearch.photolistscreen.databinding.PhotosListFragmentBinding
 import com.evgenii.photosearch.photolistscreen.presentation.adapters.PhotosAdapter
 import com.evgenii.photosearch.photolistscreen.presentation.adapters.PhotosLoadStateAdapter
-import com.evgenii.photosearch.photolistscreen.presentation.model.Commands
-import com.evgenii.photosearch.photolistscreen.presentation.model.HideKeyboard
-import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
-import com.evgenii.photosearch.photolistscreen.presentation.model.ShowDetail
+import com.evgenii.photosearch.photolistscreen.presentation.model.*
 import com.evgenii.photosearch.photolistscreen.presentation.viewmodel.PhotoListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class PhotoListFragment : BaseFragment() {
+class PhotoListFragment :
+    BaseFragment<PhotoListScreenState, Commands, PhotoListViewModel>(PhotoListViewModel::class.java) {
 
-    private val viewModel: PhotoListViewModel by viewModels()
-    private val navController: NavController by lazy { findNavController() }
     private var transitionExtras: FragmentNavigator.Extras? = null
 
     private var _binding: PhotosListFragmentBinding? = null
@@ -71,25 +61,39 @@ class PhotoListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setAnimationSharedTransition()
-        initObservers()
+        initPhotoListObserver()
         initPhotoListAdapter()
         initSearchField()
         setRetryButtonListener()
     }
 
-    private fun setAnimationSharedTransition() {
-        postponeEnterTransition()
-        binding.photoListBlock.rvPhotoList.viewTreeObserver.addOnPreDrawListener(preDrawListener)
+    override fun updateScreen(screenState: PhotoListScreenState) {
+        with(screenState) {
+            with(binding.photoListContent) {
+                root.isVisible = isContentBlockVisible
+                rvPhotoList.isVisible = isPhotoListVisible
+                progressBarLoadPhotos.isVisible = isLoadingProgressBarVisible
+                tvSearchErrorMessage.isVisible = isErrorTextVisible
+                btnRetrySearch.isVisible = isRetryButtonVisible
+                tvSearchErrorMessage.text = getString(errorTextResId)
+            }
+        }
     }
 
-    private fun initObservers() {
-        initPhotoListStateScreenObserver()
-        initPhotoListObserver()
-        initCommandsObserver()
+    override fun executeCommand(command: Commands) {
+        when (command) {
+            is HideKeyboard -> hideSoftKeyboard()
+            is ShowDetail -> navigateToDetailScreen(command.photoItem)
+        }
+    }
+
+    private fun setAnimationSharedTransition() {
+        postponeEnterTransition()
+        binding.photoListContent.rvPhotoList.viewTreeObserver.addOnPreDrawListener(preDrawListener)
     }
 
     private fun initPhotoListAdapter() {
-        binding.photoListBlock.rvPhotoList.adapter =
+        binding.photoListContent.rvPhotoList.adapter =
             adapter.withLoadStateFooter(PhotosLoadStateAdapter())
         adapter.addLoadStateListener(loadStateListener)
     }
@@ -111,22 +115,8 @@ class PhotoListFragment : BaseFragment() {
     }
 
     private fun setRetryButtonListener() =
-        binding.photoListBlock.btnRetrySearch.setOnClickListener {
+        binding.photoListContent.btnRetrySearch.setOnClickListener {
             viewModel.onRetryButtonClick()
-        }
-
-    private fun initPhotoListStateScreenObserver() =
-        viewModel.screenState.observe(viewLifecycleOwner) { photoListStateScreen ->
-            with(photoListStateScreen) {
-                with(binding.photoListBlock) {
-                    root.isVisible = isContentBlockVisible
-                    rvPhotoList.isVisible = isPhotoListVisible
-                    progressBarLoadPhotos.isVisible = isLoadingProgressBarVisible
-                    tvSearchErrorMessage.isVisible = isErrorTextVisible
-                    btnRetrySearch.isVisible = isRetryButtonVisible
-                    tvSearchErrorMessage.text = getString(errorTextResId)
-                }
-            }
         }
 
     private fun initPhotoListObserver() =
@@ -136,14 +126,6 @@ class PhotoListFragment : BaseFragment() {
                 viewModel.photoListFlow?.collectLatest {
                     adapter.submitData(it)
                 }
-            }
-        }
-
-    private fun initCommandsObserver() =
-        viewModel.commands.observe(viewLifecycleOwner) { commandEvent ->
-            when (val command: Commands? = commandEvent.getValue()) {
-                is HideKeyboard -> hideSoftKeyboard()
-                is ShowDetail -> navigateToDetailScreen(command.photoItem)
             }
         }
 
@@ -169,21 +151,11 @@ class PhotoListFragment : BaseFragment() {
             )
         }
 
-    private fun hideSoftKeyboard() {
-        val inputMethodManager: InputMethodManager = requireContext().getSystemService(
-            Context.INPUT_METHOD_SERVICE
-        ) as InputMethodManager
-        if (inputMethodManager.isAcceptingText) {
-            inputMethodManager.hideSoftInputFromWindow(
-                requireView().windowToken,
-                RESULT_UNCHANGED_SHOWN
-            )
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.photoListBlock.rvPhotoList.viewTreeObserver.removeOnPreDrawListener(preDrawListener)
+        binding.photoListContent.rvPhotoList.viewTreeObserver.removeOnPreDrawListener(
+            preDrawListener
+        )
         adapter.removeLoadStateListener { loadStateListener }
         _adapter = null
         _binding = null
