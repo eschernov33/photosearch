@@ -16,22 +16,18 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePagingConfig(): PagingConfig =
-        PagingConfig(
-            pageSize = PAGE_SIZE,
-            prefetchDistance = PREFETCH_DISTANCE,
-            enablePlaceholders = ENABLE_PLACEHOLDER,
-            initialLoadSize = INITIAL_LOAD_SIZE,
-            maxSize = MAX_SIZE
-        )
-
-    @Provides
-    @Singleton
     fun providePhotoSearchListRepository(
-        api: PhotosApi,
-        pagingConfig: PagingConfig
+        api: PhotosApi
     ): PhotoSearchRepository =
-        PhotoSearchRepositoryImpl(api, pagingConfig)
+        PhotoSearchRepositoryImpl(
+            api, PagingConfig(
+                pageSize = PAGE_SIZE,
+                prefetchDistance = PREFETCH_DISTANCE,
+                enablePlaceholders = ENABLE_PLACEHOLDER,
+                initialLoadSize = INITIAL_LOAD_SIZE,
+                maxSize = MAX_SIZE
+            )
+        )
 
     companion object {
         private const val PAGE_SIZE = 20

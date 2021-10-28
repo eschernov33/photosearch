@@ -1,7 +1,5 @@
 package com.evgenii.photosearch.detailscreen.presentation.fragments
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +14,8 @@ import androidx.transition.TransitionInflater
 import com.evgenii.photosearch.R
 import com.evgenii.photosearch.core.presentation.fragments.BaseFragment
 import com.evgenii.photosearch.core.presentation.utils.AnimationUtils
-import com.evgenii.photosearch.core.presentation.utils.PicassoUtils.Companion.loadFromUrl
+import com.evgenii.photosearch.core.presentation.utils.ImageLoaderUtils.Companion.loadFromUrl
+import com.evgenii.photosearch.core.presentation.utils.InternetUtils
 import com.evgenii.photosearch.databinding.PhotoDetailFragmentBinding
 import com.evgenii.photosearch.detailscreen.presentation.model.NavigateToBackScreen
 import com.evgenii.photosearch.detailscreen.presentation.model.OpenInBrowser
@@ -54,7 +53,7 @@ class PhotoDetailFragment : BaseFragment() {
         setAnimationParam()
         initObservers()
         setButtonListener()
-        viewModel.loadDetailInfo(photoId)
+        viewModel.onInitScreen(photoId)
     }
 
     private fun setToolbar() {
@@ -87,26 +86,24 @@ class PhotoDetailFragment : BaseFragment() {
     }
 
     private fun initObservers() {
-        initPhotoDetailInfoObserver()
         initPhotoDetailScreenStateObserver()
         initCommandsObserver()
     }
 
-    private fun initPhotoDetailInfoObserver() =
-        viewModel.photoDetail.observe(viewLifecycleOwner) { photoDetailItem ->
-            with(photoDetailItem) {
-                binding.ivUserIcon.loadFromUrl(userImageURL, R.drawable.placeholder_avatar)
-                binding.tvUserName.text = user
-                binding.layoutInformation.tvPhotoLikes.text = likes
-                binding.layoutInformation.tvPhotoDownloads.text = downloads
-                binding.tvPhotoTags.text = tags
-                binding.layoutInformation.tvPhotoComments.text = comments
-                binding.layoutInformation.tvPhotoViews.text = views
-            }
-        }
-
     private fun initPhotoDetailScreenStateObserver() =
         viewModel.photoDetailScreenState.observe(viewLifecycleOwner) { screenState ->
+            with(screenState) {
+                with(binding) {
+                    pbLoadDetailInfo.isVisible = progressBarVisibility
+                    ivUserIcon.loadFromUrl(userImageURL, R.drawable.placeholder_avatar)
+                    tvUserName.text = userName
+                    layoutInformation.tvPhotoLikes.text = likeCount
+                    layoutInformation.tvPhotoDownloads.text = downloadCount
+                    tvPhotoTags.text = tags
+                    layoutInformation.tvPhotoComments.text = commentCount
+                    layoutInformation.tvPhotoViews.text = viewsCount
+                }
+            }
             binding.pbLoadDetailInfo.isVisible = screenState.progressBarVisibility
         }
 
@@ -114,7 +111,7 @@ class PhotoDetailFragment : BaseFragment() {
         viewModel.commands.observe(viewLifecycleOwner) { commands ->
             when (val command = commands.getValue()) {
                 is NavigateToBackScreen -> navController.popBackStack()
-                is OpenInBrowser -> openInBrowser(command.path)
+                is OpenInBrowser -> InternetUtils.openInBrowser(requireContext(), command.path)
                 is ShowToast -> showToast(getString(R.string.error_load_detail))
             }
         }
@@ -123,12 +120,6 @@ class PhotoDetailFragment : BaseFragment() {
         binding.btnOpenInBrowser.setOnClickListener {
             viewModel.onOpenInBrowserClick()
         }
-
-    private fun openInBrowser(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(url)
-        startActivity(intent)
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

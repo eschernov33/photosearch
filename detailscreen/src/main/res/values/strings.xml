@@ -4,7 +4,9 @@
     <string name="title_loads">Downloads:</string>
     <string name="title_likes">Likes:</string>
     <string name="title_comments">Comments:</string>
+
     <string name="content_description_button_open_in_browser">Button go to web version</string>
     <string name="content_description_main_image">Main image</string>
+
     <string name="error_load_detail">Failed to load data!</string>
 </resources>

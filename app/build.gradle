@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
     id 'androidx.navigation.safeargs'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -33,20 +33,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 dependencies {
     implementation project(':core')
     implementation project(':detailscreen')
     implementation project(':photolistscreen')
-    implementation "androidx.appcompat:appcompat:$app_compat"
-    implementation "com.google.android.material:material:$material"
+
     implementation "com.google.dagger:hilt-android:$hilt_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout"
-    implementation "androidx.fragment:fragment-ktx:$fragment_ktx"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 }

@@ -4,7 +4,7 @@ import androidx.core.view.ViewCompat
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.recyclerview.widget.RecyclerView
 import com.evgenii.photosearch.core.presentation.utils.AnimationUtils
-import com.evgenii.photosearch.core.presentation.utils.PicassoUtils.Companion.loadFromUrl
+import com.evgenii.photosearch.core.presentation.utils.ImageLoaderUtils.Companion.loadFromUrl
 import com.evgenii.photosearch.photolistscreen.R
 import com.evgenii.photosearch.photolistscreen.databinding.ItemPhotoBinding
 import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem

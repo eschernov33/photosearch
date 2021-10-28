@@ -1,10 +1,13 @@
 package com.evgenii.photosearch.photolistscreen.presentation.model
 
+import androidx.annotation.StringRes
+import com.evgenii.photosearch.photolistscreen.R
+
 class PhotoListScreenState(
-    val photoListVisibility: Boolean = false,
-    val loadingProgressBarVisibility: Boolean = false,
-    val errorTextViewVisibility: Boolean = false,
-    val errorType: ErrorType? = null,
-    val retryButtonVisibility: Boolean = errorType == ErrorType.NETWORK,
-    val contentBlockVisibility: Boolean = photoListVisibility || errorTextViewVisibility
+    val isPhotoListVisible: Boolean = false,
+    val isLoadingProgressBarVisible: Boolean = false,
+    val isErrorTextVisible: Boolean = false,
+    @StringRes val errorTextResId: Int = R.string.empty,
+    val isRetryButtonVisible: Boolean = false,
+    val isContentBlockVisible: Boolean = isPhotoListVisible || isErrorTextVisible
 )

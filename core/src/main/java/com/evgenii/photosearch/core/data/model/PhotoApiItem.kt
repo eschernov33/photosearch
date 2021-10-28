@@ -1,6 +1,6 @@
 package com.evgenii.photosearch.core.data.model
 
-class Hit(
+class PhotoApiItem(
     val downloads: Int,
     val id: Int,
     val largeImageURL: String,

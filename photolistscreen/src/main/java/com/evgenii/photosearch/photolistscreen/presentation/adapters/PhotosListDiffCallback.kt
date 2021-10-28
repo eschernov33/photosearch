@@ -9,8 +9,7 @@ class PhotosListDiffCallback : DiffUtil.ItemCallback<PhotoItem>() {
         oldItem.id == newItem.id
 
     override fun areContentsTheSame(oldItem: PhotoItem, newItem: PhotoItem): Boolean =
-        oldItem.id == newItem.id &&
-                oldItem.user == newItem.user &&
+        oldItem.user == newItem.user &&
                 oldItem.downloads == newItem.downloads &&
                 oldItem.largeImageURL == newItem.largeImageURL &&
                 oldItem.likes == newItem.likes &&

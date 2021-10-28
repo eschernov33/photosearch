@@ -1,5 +1,4 @@
 <resources>
-
     <style name="Theme.PhotoSearch" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/purple_200</item>
         <item name="colorOnPrimary">@color/black</item>

@@ -4,7 +4,7 @@ import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import com.squareup.picasso.Picasso
 
-class PicassoUtils {
+class ImageLoaderUtils {
 
     companion object {
         fun ImageView.loadFromUrl(url: String, @DrawableRes placeholderImageRes: Int) =

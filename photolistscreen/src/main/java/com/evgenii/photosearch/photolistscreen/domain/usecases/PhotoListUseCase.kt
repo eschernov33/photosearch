@@ -6,10 +6,10 @@ import com.evgenii.photosearch.photolistscreen.domain.repository.PhotoSearchRepo
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetPhotoListUseCase @Inject constructor(
+class PhotoListUseCase @Inject constructor(
     private val photoSearchRepository: PhotoSearchRepository
 ) {
 
-    operator fun invoke(query: String): Flow<PagingData<Photo>> =
+    fun getPhotos(query: String): Flow<PagingData<Photo>> =
         photoSearchRepository.getPhotos(query)
 }

@@ -2,9 +2,13 @@
     <string name="content_description_photo">Photo</string>
     <string name="content_description_icon_download">Download icon</string>
     <string name="content_description_icon_likes">Like icon</string>
-    <string name="hint_photo_search">Search pictures</string>
+
     <string name="error_empty_result">Nothing found</string>
-    <string name="content_description_logo">Logotype</string>
     <string name="error_load_description">Failed to complete the request. Check your internet connection.</string>
+
+    <string name="hint_photo_search">Search pictures</string>
+    <string name="content_description_logo">Logotype</string>
     <string name="retry_search">Retry</string>
+
+    <string name="empty" translatable="false" />
 </resources>

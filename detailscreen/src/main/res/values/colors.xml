@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="white">#FFFFFFFF</color>
-    <color name="gray">#FF333333</color>
-    <color name="purple_700">#FF3700B3</color>
+    <color name="gray_200">#FF919191</color>
     <color name="icon_color_dark">@color/gray</color>
     <color name="background_secondary">#FFE8E8E8</color>
-    <color name="gray_200">#FF919191</color>
 </resources>

@@ -4,5 +4,5 @@ import com.evgenii.photosearch.core.domain.model.PhotoDetail
 
 interface PhotoSearchDetailRepository {
 
-    suspend fun getPhotoById(photoId: Int): List<PhotoDetail>?
+    suspend fun getPhotoById(photoId: Int): PhotoDetail?
 }

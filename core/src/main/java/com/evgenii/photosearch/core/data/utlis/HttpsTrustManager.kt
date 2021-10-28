@@ -1,4 +1,4 @@
-package com.evgenii.photosearch.core.presentation.utils
+package com.evgenii.photosearch.core.data.utlis
 
 import android.annotation.SuppressLint
 import java.security.KeyManagementException
@@ -22,7 +22,8 @@ class HttpsTrustManager : X509TrustManager {
     override fun checkServerTrusted(x509Certificates: Array<out X509Certificate>?, s: String?) =
         Unit
 
-    override fun getAcceptedIssuers(): Array<X509Certificate> = acceptedIssuers
+    override fun getAcceptedIssuers(): Array<X509Certificate> =
+        acceptedIssuers
 
     companion object {
         private var trustManagers: Array<TrustManager>? = null

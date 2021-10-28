@@ -23,7 +23,8 @@
             android:scaleType="fitXY"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/RoundedImageViewRounded" />
+            app:shapeAppearanceOverlay="@style/RoundedImageViewRounded"
+            tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/tvUserName"
@@ -36,7 +37,7 @@
             app:layout_constraintTop_toTopOf="@id/ivUserIcon"
             app:layout_constraintVertical_bias="0.4"
             app:layout_constraintVertical_chainStyle="packed"
-            tools:text="Johnny" />
+            tools:text="@tools:sample/first_names" />
 
         <TextView
             android:id="@+id/tvPhotoTag"
@@ -46,7 +47,8 @@
             app:layout_constraintBottom_toBottomOf="@id/ivPhotoCard"
             app:layout_constraintStart_toStartOf="@id/tvUserName"
             app:layout_constraintTop_toBottomOf="@id/tvUserName"
-            tools:text="Photo, tags" />
+            tools:lines="1"
+            tools:text="@tools:sample/lorem/random" />
 
         <ImageView
             android:id="@+id/ivPhotoCard"
@@ -57,7 +59,8 @@
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvPhotoTag" />
+            app:layout_constraintTop_toBottomOf="@id/tvPhotoTag"
+            tools:src="@tools:sample/backgrounds/scenic" />
 
         <ImageView
             android:id="@+id/ivIconDownload"

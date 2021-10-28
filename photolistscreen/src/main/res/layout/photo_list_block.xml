@@ -19,7 +19,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:spanCount="@integer/rv_span_count"
-        tools:listitem="@layout/item_photo" />
+        tools:listitem="@layout/item_photo"
+        tools:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/progressBarLoadPhotos"
@@ -43,7 +44,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Some error" />
+        tools:lines="3"
+        tools:text="@tools:sample/lorem/random"
+        tools:visibility="gone" />
 
     <Button
         android:id="@+id/btnRetrySearch"

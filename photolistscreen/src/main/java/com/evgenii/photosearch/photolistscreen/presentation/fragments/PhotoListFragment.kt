@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.RESULT_UNCHANGED_SHOWN
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -21,8 +22,11 @@ import com.evgenii.photosearch.core.presentation.fragments.BaseFragment
 import com.evgenii.photosearch.photolistscreen.R
 import com.evgenii.photosearch.photolistscreen.databinding.PhotosListFragmentBinding
 import com.evgenii.photosearch.photolistscreen.presentation.adapters.PhotosAdapter
-import com.evgenii.photosearch.photolistscreen.presentation.adapters.PhotosAdapterLoadState
-import com.evgenii.photosearch.photolistscreen.presentation.model.*
+import com.evgenii.photosearch.photolistscreen.presentation.adapters.PhotosLoadStateAdapter
+import com.evgenii.photosearch.photolistscreen.presentation.model.Commands
+import com.evgenii.photosearch.photolistscreen.presentation.model.HideKeyboard
+import com.evgenii.photosearch.photolistscreen.presentation.model.PhotoItem
+import com.evgenii.photosearch.photolistscreen.presentation.model.ShowDetail
 import com.evgenii.photosearch.photolistscreen.presentation.viewmodel.PhotoListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -69,7 +73,7 @@ class PhotoListFragment : BaseFragment() {
         setAnimationSharedTransition()
         initObservers()
         initPhotoListAdapter()
-        setEditTextListener()
+        initSearchField()
         setRetryButtonListener()
     }
 
@@ -86,47 +90,47 @@ class PhotoListFragment : BaseFragment() {
 
     private fun initPhotoListAdapter() {
         binding.photoListBlock.rvPhotoList.adapter =
-            adapter.withLoadStateFooter(PhotosAdapterLoadState())
+            adapter.withLoadStateFooter(PhotosLoadStateAdapter())
         adapter.addLoadStateListener(loadStateListener)
     }
 
-    private fun setEditTextListener() =
+    private fun initSearchField() {
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            text?.let { query ->
+                viewModel.onSearchTextChanged(query.toString())
+            }
+        }
         binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                viewModel.searchPhotos(binding.etSearch.text.toString())
+                viewModel.onSearchButtonClick()
                 true
             } else {
                 false
             }
         }
+    }
 
     private fun setRetryButtonListener() =
         binding.photoListBlock.btnRetrySearch.setOnClickListener {
-            viewModel.onRetryClick(binding.etSearch.text.toString())
+            viewModel.onRetryButtonClick()
         }
 
     private fun initPhotoListStateScreenObserver() =
         viewModel.screenState.observe(viewLifecycleOwner) { photoListStateScreen ->
             with(photoListStateScreen) {
                 with(binding.photoListBlock) {
-                    root.isVisible = contentBlockVisibility
-                    rvPhotoList.isVisible = photoListVisibility
-                    progressBarLoadPhotos.isVisible = loadingProgressBarVisibility
-                    tvSearchErrorMessage.isVisible = errorTextViewVisibility
-                    btnRetrySearch.isVisible = retryButtonVisibility
-                    tvSearchErrorMessage.text =
-                        errorType?.let { errorType ->
-                            when (errorType) {
-                                ErrorType.NETWORK -> getString(R.string.error_load_description)
-                                ErrorType.NOT_FOUND -> getString(R.string.error_empty_result)
-                            }
-                        } ?: EMPTY_STRING
+                    root.isVisible = isContentBlockVisible
+                    rvPhotoList.isVisible = isPhotoListVisible
+                    progressBarLoadPhotos.isVisible = isLoadingProgressBarVisible
+                    tvSearchErrorMessage.isVisible = isErrorTextVisible
+                    btnRetrySearch.isVisible = isRetryButtonVisible
+                    tvSearchErrorMessage.text = getString(errorTextResId)
                 }
             }
         }
 
     private fun initPhotoListObserver() =
-        viewModel.photoListUpdate.observe(viewLifecycleOwner) {
+        viewModel.photoListUpdated.observe(viewLifecycleOwner) {
             adapter.submitData(lifecycle, PagingData.empty())
             lifecycleScope.launch {
                 viewModel.photoListFlow?.collectLatest {
@@ -148,7 +152,7 @@ class PhotoListFragment : BaseFragment() {
         photoItem: PhotoItem
     ) {
         transitionExtras = extras
-        viewModel.onPhotoDetails(photoItem)
+        viewModel.onPhotoItemClick(photoItem)
     }
 
     private fun navigateToDetailScreen(photoItem: PhotoItem) =
@@ -183,9 +187,5 @@ class PhotoListFragment : BaseFragment() {
         adapter.removeLoadStateListener { loadStateListener }
         _adapter = null
         _binding = null
-    }
-
-    companion object {
-        private const val EMPTY_STRING = ""
     }
 }

@@ -1,4 +1,4 @@
-package com.evgenii.photosearch.di
+package com.evgenii.photosearch.core.di
 
 import com.evgenii.photosearch.core.data.api.PhotosApi
 import com.evgenii.photosearch.core.data.api.RemoteDataSource
