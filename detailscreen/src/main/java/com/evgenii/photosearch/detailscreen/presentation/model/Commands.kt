@@ -6,5 +6,5 @@ sealed class Commands : BaseCommands
 
 class OpenInBrowser(val path: String) : Commands()
 object ShowToast : Commands()
-object NavigateToBackScreen : Commands()
+object NavigateToPrevScreen : Commands()
 

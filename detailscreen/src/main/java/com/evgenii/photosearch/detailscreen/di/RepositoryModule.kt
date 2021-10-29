@@ -1,8 +1,8 @@
 package com.evgenii.photosearch.detailscreen.di
 
-import com.evgenii.photosearch.core.data.mapper.PhotoApiMapper
 import com.evgenii.photosearch.detailscreen.data.api.PhotoDetailApi
 import com.evgenii.photosearch.detailscreen.data.api.PhotoDetailApiBuilder
+import com.evgenii.photosearch.detailscreen.data.mapper.PhotoDetailApiMapper
 import com.evgenii.photosearch.detailscreen.data.repository.PhotoSearchDetailRepositoryImpl
 import com.evgenii.photosearch.detailscreen.domain.repository.PhotoSearchDetailRepository
 import dagger.Module
@@ -24,7 +24,7 @@ class RepositoryModule {
     @Singleton
     fun providePhotoSearchByIdRepository(
         api: PhotoDetailApi,
-        mapper: PhotoApiMapper
+        mapper: PhotoDetailApiMapper
     ): PhotoSearchDetailRepository =
         PhotoSearchDetailRepositoryImpl(api, mapper)
 }

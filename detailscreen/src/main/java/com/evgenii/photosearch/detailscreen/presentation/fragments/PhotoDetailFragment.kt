@@ -49,7 +49,7 @@ class PhotoDetailFragment : BaseFragment<PhotoDetailScreenState, Commands, Photo
         viewModel.onInitScreen(photoId)
     }
 
-    override fun updateScreen(screenState: PhotoDetailScreenState) {
+    override fun renderView(screenState: PhotoDetailScreenState) {
         with(screenState) {
             with(binding) {
                 pbLoadDetailInfo.isVisible = progressBarVisibility
@@ -67,7 +67,7 @@ class PhotoDetailFragment : BaseFragment<PhotoDetailScreenState, Commands, Photo
 
     override fun executeCommand(command: Commands) {
         when (command) {
-            is NavigateToBackScreen -> navController.popBackStack()
+            is NavigateToPrevScreen -> navController.popBackStack()
             is OpenInBrowser -> InternetUtils.openInBrowser(requireContext(), command.path)
             is ShowToast -> showToast(getString(R.string.error_load_detail))
         }

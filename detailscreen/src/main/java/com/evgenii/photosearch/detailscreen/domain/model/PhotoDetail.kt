@@ -1,4 +1,6 @@
-package com.evgenii.photosearch.core.domain.model
+package com.evgenii.photosearch.detailscreen.domain.model
+
+import com.evgenii.photosearch.core.domain.model.Photo
 
 class PhotoDetail(
     id: Int,

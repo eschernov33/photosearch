@@ -3,7 +3,7 @@ package com.evgenii.photosearch.detailscreen.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.evgenii.photosearch.core.presentation.viewmodel.BaseViewModel
 import com.evgenii.photosearch.detailscreen.domain.usecases.PhotoByIdUseCase
-import com.evgenii.photosearch.detailscreen.presentation.mapper.PhotoItemMapper
+import com.evgenii.photosearch.detailscreen.presentation.mapper.PhotoDetailItemMapper
 import com.evgenii.photosearch.detailscreen.presentation.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PhotoDetailViewModel @Inject constructor(
     private val photoByIdUseCase: PhotoByIdUseCase,
-    private val mapper: PhotoItemMapper
+    private val mapperDetail: PhotoDetailItemMapper
 ) : BaseViewModel<PhotoDetailScreenState, Commands>() {
 
     fun onInitScreen(photoId: Int) {
@@ -29,7 +29,7 @@ class PhotoDetailViewModel @Inject constructor(
     }
 
     fun onBackButtonPressed() {
-        executeCommand(NavigateToBackScreen)
+        executeCommand(NavigateToPrevScreen)
     }
 
     private fun loadPhotoDetailInfo(photoId: Int) {
@@ -38,9 +38,9 @@ class PhotoDetailViewModel @Inject constructor(
             val photoDetail = photoByIdUseCase.getPhoto(photoId)
             if (photoDetail == null) {
                 executeCommand(ShowToast)
-                executeCommand(NavigateToBackScreen)
+                executeCommand(NavigateToPrevScreen)
             } else {
-                val photoDetailItem = mapper.mapPhotoToPhotoDetailItem(photoDetail)
+                val photoDetailItem = mapperDetail.mapPhotoToPhotoDetailItem(photoDetail)
                 updateScreen(
                     PhotoDetailScreenState(
                         progressBarVisibility = false,

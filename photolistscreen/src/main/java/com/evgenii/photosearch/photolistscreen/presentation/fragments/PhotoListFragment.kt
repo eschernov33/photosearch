@@ -67,7 +67,7 @@ class PhotoListFragment :
         setRetryButtonListener()
     }
 
-    override fun updateScreen(screenState: PhotoListScreenState) {
+    override fun renderView(screenState: PhotoListScreenState) {
         with(screenState) {
             with(binding.photoListContent) {
                 root.isVisible = isContentBlockVisible

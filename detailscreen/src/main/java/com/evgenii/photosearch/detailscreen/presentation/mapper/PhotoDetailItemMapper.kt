@@ -1,10 +1,10 @@
 package com.evgenii.photosearch.detailscreen.presentation.mapper
 
-import com.evgenii.photosearch.core.domain.model.PhotoDetail
+import com.evgenii.photosearch.detailscreen.domain.model.PhotoDetail
 import com.evgenii.photosearch.detailscreen.presentation.model.PhotoDetailItem
 import javax.inject.Inject
 
-class PhotoItemMapper @Inject constructor() {
+class PhotoDetailItemMapper @Inject constructor() {
 
     fun mapPhotoToPhotoDetailItem(photo: PhotoDetail): PhotoDetailItem =
         PhotoDetailItem(

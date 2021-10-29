@@ -13,13 +13,16 @@ import com.evgenii.photosearch.core.presentation.model.BaseCommands
 import com.evgenii.photosearch.core.presentation.model.BaseScreenState
 import com.evgenii.photosearch.core.presentation.viewmodel.BaseViewModel
 
-abstract class BaseFragment<SS : BaseScreenState, C : BaseCommands, VM : BaseViewModel<SS, C>>(
-    viewModelClass: Class<VM>
+abstract class BaseFragment<
+        ScreenState : BaseScreenState,
+        Commands : BaseCommands,
+        ViewModel : BaseViewModel<ScreenState, Commands>>(
+    viewModelClass: Class<ViewModel>
 ) : Fragment() {
 
     protected val navController: NavController by lazy { findNavController() }
 
-    protected val viewModel: VM by lazy { ViewModelProvider(this)[viewModelClass] }
+    protected val viewModel: ViewModel by lazy { ViewModelProvider(this)[viewModelClass] }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,7 +30,7 @@ abstract class BaseFragment<SS : BaseScreenState, C : BaseCommands, VM : BaseVie
     }
 
     private fun initObservers() {
-        viewModel.screenState.observe(viewLifecycleOwner, this::updateScreen)
+        viewModel.screenState.observe(viewLifecycleOwner, this::renderView)
         viewModel.commands.observe(viewLifecycleOwner) { event ->
             event.getValue()?.let(this::executeCommand)
         }
@@ -52,7 +55,7 @@ abstract class BaseFragment<SS : BaseScreenState, C : BaseCommands, VM : BaseVie
         }
     }
 
-    abstract fun updateScreen(screenState: SS)
+    abstract fun renderView(screenState: ScreenState)
 
-    abstract fun executeCommand(command: C)
+    abstract fun executeCommand(command: Commands)
 }

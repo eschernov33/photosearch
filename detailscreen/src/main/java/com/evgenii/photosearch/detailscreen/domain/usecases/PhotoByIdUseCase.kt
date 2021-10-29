@@ -1,6 +1,6 @@
 package com.evgenii.photosearch.detailscreen.domain.usecases
 
-import com.evgenii.photosearch.core.domain.model.PhotoDetail
+import com.evgenii.photosearch.detailscreen.domain.model.PhotoDetail
 import com.evgenii.photosearch.detailscreen.domain.repository.PhotoSearchDetailRepository
 import javax.inject.Inject
 

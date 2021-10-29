@@ -2,10 +2,10 @@ package com.evgenii.photosearch.photolistscreen.data.pagesource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.evgenii.photosearch.core.data.mapper.PhotoApiMapper
 import com.evgenii.photosearch.core.data.model.PhotoApiResponse
 import com.evgenii.photosearch.core.domain.model.Photo
 import com.evgenii.photosearch.photolistscreen.data.api.PhotoListApi
+import com.evgenii.photosearch.photolistscreen.data.mapper.PhotosApiMapper
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -13,7 +13,7 @@ import timber.log.Timber
 class PhotoListPageSource(
     private val api: PhotoListApi,
     private val query: String,
-    private val mapper: PhotoApiMapper = PhotoApiMapper()
+    private val mapper: PhotosApiMapper = PhotosApiMapper()
 ) : PagingSource<Int, Photo>() {
 
     override fun getRefreshKey(state: PagingState<Int, Photo>): Int? {
