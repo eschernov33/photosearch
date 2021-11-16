@@ -6,9 +6,7 @@ class PhotoDetailItem(
     val userImageURL: String,
     val likes: String,
     val downloads: String,
-    val largeImageURL: String,
     val tags: String,
     val comments: String,
     val views: String,
-    val pageURL: String
 )

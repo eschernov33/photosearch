@@ -10,6 +10,9 @@ class PhotoListUseCase @Inject constructor(
     private val photoSearchRepository: PhotoSearchRepository
 ) {
 
-    fun getPhotos(query: String): Flow<PagingData<Photo>> =
-        photoSearchRepository.getPhotos(query)
+    suspend fun getPhotos(query: String): Flow<PagingData<Photo>> =
+        photoSearchRepository.getPhotos(
+            query,
+            debugMode = com.evgenii.photosearch.core.BuildConfig.IS_LOCAL_DATA_DEBUG
+        )
 }

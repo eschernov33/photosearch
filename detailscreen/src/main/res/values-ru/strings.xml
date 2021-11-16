@@ -5,8 +5,11 @@
     <string name="title_likes">Нравится:</string>
     <string name="title_comments">Комментарии:</string>
 
-    <string name="content_description_button_open_in_browser">Кнопка перехода в веб версию</string>
     <string name="content_description_main_image">Основное изображение</string>
+    <string name="content_description_arrow_back">Кнопка назад</string>
 
     <string name="error_load_detail">Не удалось загрузить данные!</string>
+    <string name="retry">ПОВТОРИТЬ</string>
+    <string name="label_comment">Комментарий</string>
+    <string name="btn_save">СОХРАНИТЬ</string>
 </resources>

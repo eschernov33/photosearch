@@ -1,6 +1,5 @@
 package com.evgenii.photosearch.core.data.api
 
-import com.evgenii.photosearch.core.data.api.PhotosApi.Companion.API_PIXABAY_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -18,5 +17,7 @@ class PhotoApiBuilder {
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()
         }
+
+        private const val API_PIXABAY_URL = "https://pixabay.com/api/"
     }
 }

@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface PhotoSearchRepository {
 
-    fun getPhotos(query: String): Flow<PagingData<Photo>>
+    suspend fun getPhotos(query: String, debugMode: Boolean = false): Flow<PagingData<Photo>>
 }

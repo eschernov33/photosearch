@@ -13,10 +13,8 @@ class PhotoDetailItemMapper @Inject constructor() {
             userImageURL = photo.userImageURL,
             likes = photo.likes.toString(),
             downloads = photo.downloads.toString(),
-            largeImageURL = photo.largeImageURL,
             tags = photo.tags,
             comments = photo.comments.toString(),
             views = photo.views.toString(),
-            pageURL = photo.pageURL
         )
 }

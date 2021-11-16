@@ -9,6 +9,5 @@ class PhotoApiItem(
     val user: String,
     val userImageURL: String,
     val comments: Int,
-    val views: Int,
-    val pageURL: String
+    val views: Int
 )

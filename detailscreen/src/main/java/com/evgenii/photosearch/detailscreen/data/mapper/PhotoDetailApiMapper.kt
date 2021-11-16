@@ -11,7 +11,7 @@ class PhotoDetailApiMapper @Inject constructor() {
             : List<PhotoDetail> =
         photoApiResponse.photoApiItems.map(::mapPhotoApiItemToPhotoDetail)
 
-    private fun mapPhotoApiItemToPhotoDetail(photoApiItem: PhotoApiItem): PhotoDetail =
+    fun mapPhotoApiItemToPhotoDetail(photoApiItem: PhotoApiItem): PhotoDetail =
         PhotoDetail(
             id = photoApiItem.id,
             user = photoApiItem.user,
@@ -22,6 +22,5 @@ class PhotoDetailApiMapper @Inject constructor() {
             tags = photoApiItem.tags,
             comments = photoApiItem.comments,
             views = photoApiItem.views,
-            pageURL = photoApiItem.pageURL
         )
 }

@@ -11,8 +11,7 @@ class PhotoDetail(
     largeImageURL: String,
     tags: String,
     val comments: Int,
-    val views: Int,
-    val pageURL: String
+    val views: Int
 ) : Photo(
     id = id,
     user = user,

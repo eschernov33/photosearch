@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="red">#FFCF3232</color>
     <color name="icon_color_dark">@color/gray</color>
 </resources>

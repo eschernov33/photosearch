@@ -3,9 +3,8 @@ package com.evgenii.photosearch.photolistscreen.data.mapper
 import com.evgenii.photosearch.core.data.model.PhotoApiItem
 import com.evgenii.photosearch.core.data.model.PhotoApiResponse
 import com.evgenii.photosearch.core.domain.model.Photo
-import javax.inject.Inject
 
-class PhotosApiMapper @Inject constructor() {
+class PhotosApiMapper {
 
     fun mapPhotoApiResponseToListPhoto(photoApiResponse: PhotoApiResponse): List<Photo> =
         photoApiResponse.photoApiItems.map(::mapPhotoApiItemToPhoto)
